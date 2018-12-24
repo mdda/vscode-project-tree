@@ -1,3 +1,12 @@
+# Project-Tree Notes
+
+Sample seems to have 3 different ways of providing a tree layout.  Need to back 
+a single, flexible version...
+
+
+-----------
+
+
 # Views & View Containers
 
 This sample demonstrates how to implement and contribute a tree view in VS Code. This includes:
