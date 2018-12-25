@@ -1,7 +1,12 @@
 # Project-Tree Notes
 
-Sample seems to have 3 different ways of providing a tree layout.  Need to back 
+Sample seems to have 3-4 different ways of providing a tree layout.  Need to back 
 a single, flexible version...
+
+*  DepNodeProvider = ./nodeDependencies
+*  JsonOutlineProvider = ./jsonOutline
+*  FtpExplorer = ./ftpExplorer
+*  FileExplorer = ./fileExplorer
 
 
 -----------

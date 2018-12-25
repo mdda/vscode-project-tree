@@ -1,0 +1,198 @@
+{
+  "name": "project-tree",
+  "displayName": "Project Tree",
+  "description": "Project Tree extension",
+  "version": "0.0.1",
+  "publisher": "redvatlabs",
+  "enableProposedApi": true,
+  "engines": {
+    "vscode": "^1.25.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "activationEvents": [
+    "onView:nodeDependencies",
+    "onView:jsonOutline",
+    "onView:projectExplorer",
+    "onView:testView",
+    "onLanguage:json",
+    "onLanguage:jsonc",
+    "onCommand:sample.reveal"
+  ],
+  "main": "./out/extension",
+  "contributes": {
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "package-explorer",
+          "title": "Package Explorer",
+          "icon": "media/dep.svg"
+        }
+      ]
+    },
+    "views": {
+      "package-explorer": [
+        {
+          "id": "nodeDependencies",
+          "name": "Node Dependencies"
+        }
+      ],
+      "explorer": [
+        {
+          "id": "jsonOutline",
+          "name": "Json Outline",
+          "when": "jsonOutlineEnabled"
+        },
+        {
+          "id": "projectExplorer",
+          "name": "Project Explorer"
+        },
+        {
+          "id": "testView",
+          "name": "Test View"
+        }
+      ]
+    },
+    "commands": [
+      {
+        "command": "nodeDependencies.addEntry",
+        "title": "Add"
+      },
+      {
+        "command": "nodeDependencies.refreshEntry",
+        "title": "Refresh",
+        "icon": {
+          "light": "resources/light/refresh.svg",
+          "dark": "resources/dark/refresh.svg"
+        }
+      },
+      {
+        "command": "nodeDependencies.deleteEntry",
+        "title": "Delete"
+      },
+                        
+                        
+                        
+                        
+      {
+        "command": "jsonOutline.refresh",
+        "title": "Refresh",
+        "icon": {
+          "light": "resources/light/refresh.svg",
+          "dark": "resources/dark/refresh.svg"
+        }
+      },
+      {
+        "command": "jsonOutline.refreshNode",
+        "title": "Refresh",
+        "icon": {
+          "light": "resources/light/refresh.svg",
+          "dark": "resources/dark/refresh.svg"
+        }
+      },
+      {
+        "command": "jsonOutline.renameNode",
+        "title": "Rename"
+      },
+                        
+                        
+      {
+        "command": "projectExplorer.refreshFile",
+        "title": "Refresh",
+        "icon": {
+          "light": "resources/light/refresh.svg",
+          "dark": "resources/dark/refresh.svg"
+        }
+      },
+      {
+        "command": "projectExplorer.openFile",
+        "title": "Open File"
+      },
+      {
+        "command": "projectExplorer.hello",
+        "title": "Say Hello"
+      },
+                        
+                        
+      {
+        "command": "testView.reveal",
+        "title": "Reveal"
+      }
+    ],
+    "menus": {
+      "commandPalette": [
+        {
+          "command": "projectExplorer.hello"
+        }
+      ],
+      "view/title": [
+        {
+          "command": "jsonOutline.refresh",
+          "when": "view == jsonOutline",
+          "group": "navigation"
+        },
+        {
+          "command": "nodeDependencies.refreshEntry",
+          "when": "view == nodeDependencies",
+          "group": "navigation"
+        },
+        {
+          "command": "nodeDependencies.addEntry",
+          "when": "view == nodeDependencies"
+        }
+      ],
+      "view/item/context": [
+        {
+          "command": "nodeDependencies.deleteEntry",
+          "when": "view == nodeDependencies && viewItem == dependency"
+        },
+        {
+          "command": "jsonOutline.renameNode",
+          "when": "view == jsonOutline"
+        },
+        {
+          "command": "jsonOutline.refreshNode",
+          "when": "view == jsonOutline",
+          "group": "inline"
+        },
+        {
+          "command": "projectExplorer.refreshFile",
+          "when": "view == projectExplorer && viewItem == file",
+          "group": "inline"
+        }
+      ]
+    },
+    "configuration": [
+      {
+        "title": "JSON Outline",
+        "properties": {
+          "jsonOutline.autorefresh": {
+            "type": "boolean",
+            "default": false
+          }
+        }
+      }
+    ]
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "postinstall": "node ./node_modules/vscode/bin/install"
+  },
+  "devDependencies": {
+    "@types/mkdirp": "^0.5.2",
+    "@types/node": "*",
+    "@types/rimraf": "^2.0.2",
+    "tslint": "^5.11.0",
+    "typescript": "^2.1.4",
+    "vscode": "^1.1.18"
+  },
+  "dependencies": {
+    "jsonc-parser": "^0.4.2",
+    "ftp": "^0.3.10",
+    "mkdirp": "^0.5.1",
+    "rimraf": "^2.6.2"
+  }
+}
