@@ -1,198 +1,133 @@
 {
-  "name": "project-tree",
-  "displayName": "Project Tree",
-  "description": "Project Tree extension",
-  "version": "0.0.1",
-  "publisher": "redvatlabs",
-  "enableProposedApi": true,
-  "engines": {
-    "vscode": "^1.25.0"
-  },
-  "categories": [
-    "Other"
-  ],
-  "activationEvents": [
-    "onView:nodeDependencies",
-    "onView:jsonOutline",
-    "onView:projectExplorer",
-    "onView:testView",
-    "onLanguage:json",
-    "onLanguage:jsonc",
-    "onCommand:sample.reveal"
-  ],
-  "main": "./out/extension",
-  "contributes": {
-    "viewsContainers": {
-      "activitybar": [
-        {
-          "id": "package-explorer",
-          "title": "Package Explorer",
-          "icon": "media/dep.svg"
-        }
-      ]
+    "name": "vscode-project-tree",
+    "displayName": "Project Tree",
+    "description": "A Project Tree for VSCode",
+    "version": "0.0.1",
+    "publisher": "mdda",
+    "homepage": "https://github.com/mdda/vscode-project-tree",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/mdda/vscode-project-tree"
     },
-    "views": {
-      "package-explorer": [
-        {
-          "id": "nodeDependencies",
-          "name": "Node Dependencies"
-        }
-      ],
-      "explorer": [
-        {
-          "id": "jsonOutline",
-          "name": "Json Outline",
-          "when": "jsonOutlineEnabled"
-        },
-        {
-          "id": "projectExplorer",
-          "name": "Project Explorer"
-        },
-        {
-          "id": "testView",
-          "name": "Test View"
-        }
-      ]
+    "icon": "resources/icon.png",
+    "galleryBanner": {
+        "color": "#292d3e",
+        "theme": "dark"
     },
-    "commands": [
-      {
-        "command": "nodeDependencies.addEntry",
-        "title": "Add"
-      },
-      {
-        "command": "nodeDependencies.refreshEntry",
-        "title": "Refresh",
-        "icon": {
-          "light": "resources/light/refresh.svg",
-          "dark": "resources/dark/refresh.svg"
-        }
-      },
-      {
-        "command": "nodeDependencies.deleteEntry",
-        "title": "Delete"
-      },
-                        
-                        
-                        
-                        
-      {
-        "command": "jsonOutline.refresh",
-        "title": "Refresh",
-        "icon": {
-          "light": "resources/light/refresh.svg",
-          "dark": "resources/dark/refresh.svg"
-        }
-      },
-      {
-        "command": "jsonOutline.refreshNode",
-        "title": "Refresh",
-        "icon": {
-          "light": "resources/light/refresh.svg",
-          "dark": "resources/dark/refresh.svg"
-        }
-      },
-      {
-        "command": "jsonOutline.renameNode",
-        "title": "Rename"
-      },
-                        
-                        
-      {
-        "command": "projectExplorer.refreshFile",
-        "title": "Refresh",
-        "icon": {
-          "light": "resources/light/refresh.svg",
-          "dark": "resources/dark/refresh.svg"
-        }
-      },
-      {
-        "command": "projectExplorer.openFile",
-        "title": "Open File"
-      },
-      {
-        "command": "projectExplorer.hello",
-        "title": "Say Hello"
-      },
-                        
-                        
-      {
-        "command": "testView.reveal",
-        "title": "Reveal"
-      }
+    "engines": {
+        "vscode": "^1.23.0"
+    },
+    "categories": [
+        "Other"
     ],
-    "menus": {
-      "commandPalette": [
-        {
-          "command": "projectExplorer.hello"
+    "activationEvents": [
+        "onView:projectTree"
+    ],
+    "main": "./out/src/extension",
+    "contributes": {
+        "commands": [
+            {
+                "command": "symbolOutline.refresh",
+                "title": "Refresh code outline",
+                "icon": {
+                    "dark": "resources/dark/icon-refresh.svg",
+                    "light": "resources/light/icon-refresh.svg"
+                }
+            },
+            {
+                "command": "symbolOutline.revealCurrentSymbol",
+                "title": "Show in code outline"
+            }
+        ],
+        "viewsContainers": {
+            "activitybar": [
+                {
+                    "id": "outline",
+                    "title": "Outline",
+                    "icon": "resources/icon.svg"
+                }
+            ]
+        },
+        "views": {
+            "outline": [
+                {
+                    "id": "symbolOutline",
+                    "name": "Code Outline"
+                }
+            ]
+        },
+        "menus": {
+            "editor/context": [
+                {
+                    "command": "symbolOutline.revealCurrentSymbol",
+                    "group": "navigation"
+                }
+            ],
+            "view/title": [
+                {
+                    "command": "symbolOutline.refresh",
+                    "when": "view == symbolOutline",
+                    "group": "navigation"
+                }
+            ]
+        },
+        "configuration": {
+            "type": "object",
+            "title": "Code Outline configuration",
+            "properties": {
+                "symbolOutline.doSort": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "Sort the outline"
+                },
+                "symbolOutline.expandNodes": {
+                    "type": "array",
+                    "default": [
+                        "Module",
+                        "Class",
+                        "Interface",
+                        "Namespace",
+                        "Object",
+                        "Package",
+                        "Struct"
+                    ],
+                    "description": "Kinds of nodes to be expanded automatically."
+                },
+                "symbolOutline.sortOrder": {
+                    "type": "array",
+                    "default": [
+                        "Class",
+                        "Module",
+                        "Constant",
+                        "Interface",
+                        "*",
+                        "Constructor",
+                        "Function",
+                        "Method"
+                    ],
+                    "description": "Order to the sort symbols in, if sorted.  * is placeholder for all symbols not explicitly listed."
+                },
+                "symbolOutline.topLevel": {
+                    "type": "array",
+                    "default": [
+                        "*"
+                    ],
+                    "description": "Which symbols to include at the topmost scope.  * includes everything."
+                }
+            }
         }
-      ],
-      "view/title": [
-        {
-          "command": "jsonOutline.refresh",
-          "when": "view == jsonOutline",
-          "group": "navigation"
-        },
-        {
-          "command": "nodeDependencies.refreshEntry",
-          "when": "view == nodeDependencies",
-          "group": "navigation"
-        },
-        {
-          "command": "nodeDependencies.addEntry",
-          "when": "view == nodeDependencies"
-        }
-      ],
-      "view/item/context": [
-        {
-          "command": "nodeDependencies.deleteEntry",
-          "when": "view == nodeDependencies && viewItem == dependency"
-        },
-        {
-          "command": "jsonOutline.renameNode",
-          "when": "view == jsonOutline"
-        },
-        {
-          "command": "jsonOutline.refreshNode",
-          "when": "view == jsonOutline",
-          "group": "inline"
-        },
-        {
-          "command": "projectExplorer.refreshFile",
-          "when": "view == projectExplorer && viewItem == file",
-          "group": "inline"
-        }
-      ]
     },
-    "configuration": [
-      {
-        "title": "JSON Outline",
-        "properties": {
-          "jsonOutline.autorefresh": {
-            "type": "boolean",
-            "default": false
-          }
-        }
-      }
-    ]
-  },
-  "scripts": {
-    "vscode:prepublish": "npm run compile",
-    "compile": "tsc -p ./",
-    "watch": "tsc -watch -p ./",
-    "postinstall": "node ./node_modules/vscode/bin/install"
-  },
-  "devDependencies": {
-    "@types/mkdirp": "^0.5.2",
-    "@types/node": "*",
-    "@types/rimraf": "^2.0.2",
-    "tslint": "^5.11.0",
-    "typescript": "^2.1.4",
-    "vscode": "^1.1.18"
-  },
-  "dependencies": {
-    "jsonc-parser": "^0.4.2",
-    "ftp": "^0.3.10",
-    "mkdirp": "^0.5.1",
-    "rimraf": "^2.6.2"
-  }
+    "scripts": {
+        "vscode:prepublish": "tsc -p ./",
+        "compile": "tsc -watch -p ./",
+        "postinstall": "node ./node_modules/vscode/bin/install",
+        "test": "node ./node_modules/vscode/bin/test"
+    },
+    "devDependencies": {
+        "@types/mocha": "^2.2.32",
+        "@types/node": "^6.0.40",
+        "mocha": "^2.3.3",
+        "typescript": "^2.0.3",
+        "vscode": "^1.1.17"
+    }
 }

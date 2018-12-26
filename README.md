@@ -1,68 +1,84 @@
-# Project-Tree Notes
+# Project tree for Visual Studio Code
 
-Sample seems to have 3-4 different ways of providing a tree layout.  Need to back 
-a single, flexible version...
+Code foundation taken from (https://github.com/patrys/vscode-code-outline)
 
-*  DepNodeProvider = ./nodeDependencies
-*  JsonOutlineProvider = ./jsonOutline
-*  FtpExplorer = ./ftpExplorer
-*  FileExplorer = ./fileExplorer
+symbolOutline -> projectTree
+SymbolOutlineProvider -> ProjectTreeProvider
 
+## Features
 
------------
+Displays a code outline tree in the explorer pane.
 
+To activate find and expand the "Code Outline" section near the bottom of the Explorer tab.
 
-# Views & View Containers
+## Language Support
 
-This sample demonstrates how to implement and contribute a tree view in VS Code. This includes:
+For the outline to work, the language support plugins need to support symbol information.
 
-- Contributing views and view containers.
-- Contributing actions in various location of the view.
-- Implementing the tree data provider for the view.
-- Creating and working with the view.
+For the outline to form a tree structure, the language support plugins need to report the entire definition range as part of symbol.
 
-This sample provides following views
+See VS Code [issue #34968](https://github.com/Microsoft/vscode/issues/34968) and language server protocol [issue #132](https://github.com/Microsoft/language-server-protocol/issues/132) for a discussion.
 
-- Node dependencies view
-- Ftp file explorer view
+Here is a list of languages known to work with Code Outline:
 
-Following example shows Node dependencies view in Package Explorer View container.
+| Language/Format | Extension |
+| --- | --- |
+| C | [C/C++](https://marketplace.visualstudio.com/items?itemName=ms-vscode.cpptools) |
+| C++ | [C/C++](https://marketplace.visualstudio.com/items?itemName=ms-vscode.cpptools), [cquery](https://github.com/cquery-project/vscode-cquery) |
+| Docker | [Docker](https://marketplace.visualstudio.com/items?itemName=PeterJausovec.vscode-docker) |
+| HTML | Comes with VS Code |
+| Go | [Go](https://marketplace.visualstudio.com/items?itemName=ms-vscode.Go) |
+| Java | [Language Support for Java(TM) by Red Hat](https://marketplace.visualstudio.com/items?itemName=redhat.java)
+| JavaScript | Comes with VS Code |
+| JSON | Comes with VS Code |
+| Markdown | Comes with VS Code |
+| Perl | [Perl](https://marketplace.visualstudio.com/items?itemName=henriiik.vscode-perl) |
+| PHP | [PHP Symbols](https://marketplace.visualstudio.com/items?itemName=linyang95.php-symbols) |
+| Powershell | [PowerShell](https://marketplace.visualstudio.com/items?itemName=ms-vscode.PowerShell) |
+| Python | [Python](https://marketplace.visualstudio.com/items?itemName=ms-python.python) |
+| Rust | [Rust (rls)](https://marketplace.visualstudio.com/items?itemName=rust-lang.rust) |
+| TypeScript | Comes with VS Code |
+| YAML | [YAML Support by Red Hat](https://marketplace.visualstudio.com/items?itemName=redhat.vscode-yaml) |
 
-![Package Explorer](./resources/package-explorer.png)
+Please report any missing extensions and I'll update the list.
 
-## VS Code API
+## Extension Settings
 
-This sample uses following contribution points, activation events and APIs
+Default settings:
 
-### Contribution Points
+```json
+{
+  "symbolOutline.doSort": false,
+  "symbolOutline.sortOrder": [
+    "Class",
+    "Module",
+    "Constant",
+    "Interface",
+    "*",
+    "Constructor",
+    "Function",
+    "Method"
+  ],
+  "symbolOutline.expandNodes": [
+    "Module",
+    "Class",
+    "Interface",
+    "Namespace",
+    "Object",
+    "Package",
+    "Struct"
+  ],
+  "symbolOutline.topLevel": [
+    "*"
+  ]
+}
+```
 
-- `views`
-- `viewContainers`
-- `menu`
-	- `view/title`
-	- `view/item/context`
+- **doSort:** sort the outline.
+- **expandNodes:** kinds of nodes to be expanded automatically.
+- **sortOrder:** order to the sort symbols.
+- **topLevel:** wich symbols include at the topmost scope.
 
-### Activation Events
+## Known Issues
 
-- `onView:${viewId}`
-
-### APIs
-
-- `window.createTreeView`
-- `window.registerTreeDataProvider`
-- `TreeView`
-- `TreeDataProvider`
-
-Refer to [Usage](./USAGE.md) document for more details.
-
-## Running the Sample
-
-- Open this example in VS Code Insiders (i.e. a recent version of VS code):
-  -  `cd .; code --enable-proposed-api vscode-samples.project-tree .`
-- `npm install`
-- `npm run watch`
-- `F5` to start debugging
-- Node dependencies view is shown in Package explorer view container in Activity bar.
-- FTP file explorer view should be shown in Explorer
-
-
+Depending on other extensions you have installed the symbol list may initially return an empty list. Use the "Refresh" button next to the title to fix this.
