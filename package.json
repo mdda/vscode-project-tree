@@ -27,23 +27,23 @@
     "contributes": {
         "commands": [
             {
-                "command": "symbolOutline.refresh",
-                "title": "Refresh code outline",
+                "command": "projectTree.refresh",
+                "title": "Refresh project tree",
                 "icon": {
                     "dark": "resources/dark/icon-refresh.svg",
                     "light": "resources/light/icon-refresh.svg"
                 }
             },
             {
-                "command": "symbolOutline.revealCurrentSymbol",
+                "command": "projectTree.revealCurrentSymbol",
                 "title": "Show in code outline"
             }
         ],
         "viewsContainers": {
             "activitybar": [
                 {
-                    "id": "outline",
-                    "title": "Outline",
+                    "id": "projecttree",
+                    "title": "Project Tree",
                     "icon": "resources/icon.svg"
                 }
             ]
@@ -51,29 +51,29 @@
         "views": {
             "outline": [
                 {
-                    "id": "symbolOutline",
-                    "name": "Code Outline"
+                    "id": "projectTree",
+                    "name": "Project Tree"
                 }
             ]
         },
         "menus": {
             "editor/context": [
                 {
-                    "command": "symbolOutline.revealCurrentSymbol",
+                    "command": "projectTree.revealCurrentSymbol",
                     "group": "navigation"
                 }
             ],
             "view/title": [
                 {
-                    "command": "symbolOutline.refresh",
-                    "when": "view == symbolOutline",
+                    "command": "projectTree.refresh",
+                    "when": "view == projectTree",
                     "group": "navigation"
                 }
             ]
         },
         "configuration": {
             "type": "object",
-            "title": "Code Outline configuration",
+            "title": "Project Tree configuration",
             "properties": {
                 "symbolOutline.doSort": {
                     "type": "boolean",
