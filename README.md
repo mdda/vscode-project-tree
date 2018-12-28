@@ -4,8 +4,26 @@ Code foundation taken from (https://github.com/patrys/vscode-code-outline)
 
 symbolOutline -> projectTree
 SymbolOutlineProvider -> ProjectTreeProvider
+SymbolOutlineTreeDataProvider -> ProjectTreeTreeDataProvider
 
-## Features
+## Running/debugging the Project Tree extension 
+
+```
+dnf install nodejs-typescript.noarch
+```
+
+- Open this example in VS Code Insiders (i.e. a recent version of VS code):
+  -  `cd .; code .`
+  -  ?? `cd .; code --enable-proposed-api vscode.project-tree .`
+- `F5` to start debugging
+- Node dependencies view is shown in Package explorer view container in Activity bar.
+
+
+
+
+
+
+## Features (OLD)
 
 Displays a code outline tree in the explorer pane.
 

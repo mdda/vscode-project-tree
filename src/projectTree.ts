@@ -78,7 +78,7 @@ export class SymbolNode {
   }
 }
 
-export class SymbolOutlineTreeDataProvider
+export class ProjectTreeTreeDataProvider
   implements TreeDataProvider<SymbolNode> {
   private _onDidChangeTreeData: EventEmitter<SymbolNode | null> = new EventEmitter<SymbolNode | null>();
   readonly onDidChangeTreeData: Event<SymbolNode | null> = this
@@ -208,23 +208,26 @@ export class SymbolOutlineTreeDataProvider
   }
 
   refresh() {
+    console.log("ProjectTreeTreeDataProvider.refresh()");
     this._onDidChangeTreeData.fire();
   }
 }
 
-export class SymbolOutlineProvider {
+export class ProjectTreeProvider {
   symbolViewer: TreeView<SymbolNode>;
 
   constructor(context: ExtensionContext) {
-    const treeDataProvider = new SymbolOutlineTreeDataProvider(context);
-    this.symbolViewer = window.createTreeView("symbolOutline", {
+    console.log("ProjectTreeProvider.constructor");
+    
+    const treeDataProvider = new ProjectTreeTreeDataProvider(context);
+    this.symbolViewer = window.createTreeView("projectTree", {
       treeDataProvider
     });
-    commands.registerCommand("symbolOutline.refresh", () => {
+    commands.registerCommand("projectTree.refresh", () => {
       treeDataProvider.refresh();
     });
     commands.registerCommand(
-      "symbolOutline.revealRange",
+      "projectTree.revealRange",
       (editor: TextEditor, range: Range) => {
         editor.revealRange(range, TextEditorRevealType.Default);
         editor.selection = new Selection(range.start, range.start);
@@ -236,7 +239,7 @@ export class SymbolOutlineProvider {
     workspace.onDidChangeTextDocument(event => treeDataProvider.refresh());
     workspace.onDidSaveTextDocument(document => treeDataProvider.refresh());
     commands.registerTextEditorCommand(
-      "symbolOutline.revealCurrentSymbol",
+      "projectTree.revealCurrentSymbol",
       (editor: TextEditor) => {
         if (editor.selections.length) {
           const node = treeDataProvider.getNodeByPosition(
@@ -252,7 +255,7 @@ export class SymbolOutlineProvider {
 }
 
 function readOpts() {
-  let opts = workspace.getConfiguration("symbolOutline");
+  let opts = workspace.getConfiguration("projectTree");
   optsDoSort = opts.get<boolean>("doSort");
   optsExpandNodes = convertEnumNames(opts.get<string[]>("expandNodes"));
   optsSortOrder = convertEnumNames(opts.get<string[]>("sortOrder"));

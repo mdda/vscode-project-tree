@@ -1,4 +1,4 @@
-import * as vscode from "vscode";
+import * as vscode from "vscode"; 
 
 //import { SymbolOutlineProvider } from "./symbolOutline";
 import { ProjectTreeProvider } from "./projectTree";
