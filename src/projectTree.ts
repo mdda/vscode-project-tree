@@ -89,10 +89,12 @@ export class ProjectTreeTreeDataProvider
   private editor: TextEditor;
 
   constructor(context: ExtensionContext) {
+    console.log("ProjectTreeTreeDataProvider.constructor");
     this.context = context;
   }
 
   private getSymbols(document: TextDocument): Thenable<SymbolInformation[]> {
+    console.log("ProjectTreeTreeDataProvider.getSymbols");
     return commands.executeCommand<SymbolInformation[]>(
       "vscode.executeDocumentSymbolProvider",
       document.uri
@@ -110,6 +112,8 @@ export class ProjectTreeTreeDataProvider
   }
 
   private async updateSymbols(editor: TextEditor): Promise<void> {
+    console.log("ProjectTreeTreeDataProvider.updateSymbols");
+    
     const tree = new SymbolNode();
     this.editor = editor;
     if (editor) {
@@ -156,6 +160,8 @@ export class ProjectTreeTreeDataProvider
   }
 
   async getChildren(node?: SymbolNode): Promise<SymbolNode[]> {
+    console.log("ProjectTreeTreeDataProvider.getChildren");
+
     if (node) {
       return node.children;
     } else {
@@ -165,10 +171,14 @@ export class ProjectTreeTreeDataProvider
   }
 
   getParent(node: SymbolNode): SymbolNode {
+    console.log("ProjectTreeTreeDataProvider.getParent");
+    
     return node.parent;
   }
 
   getNodeByPosition(position: Position): SymbolNode {
+    console.log("ProjectTreeTreeDataProvider.getNodeByPosition", position);
+    
     let node = this.tree;
     while (node.children.length) {
       const matching = node.children.filter(node =>
@@ -185,6 +195,8 @@ export class ProjectTreeTreeDataProvider
   }
 
   getTreeItem(node: SymbolNode): TreeItem {
+    console.log("ProjectTreeTreeDataProvider.getTreeItem");
+    
     const { kind } = node.symbol;
     let treeItem = new TreeItem(node.symbol.name);
 
@@ -198,7 +210,7 @@ export class ProjectTreeTreeDataProvider
     }
 
     treeItem.command = {
-      command: "symbolOutline.revealRange",
+      command: "projectTree.revealRange",
       title: "",
       arguments: [this.editor, node.symbol.location.range]
     };

@@ -14,7 +14,7 @@ dnf install nodejs-typescript.noarch
 
 - Open this example in VS Code Insiders (i.e. a recent version of VS code):
   -  `cd .; code .`
-  -  ?? `cd .; code --enable-proposed-api vscode.project-tree .`
+  -  ?? `cd .; code --enable-proposed-api mdda.vscode-project-tree .`
 - `F5` to start debugging
 - Node dependencies view is shown in Package explorer view container in Activity bar.
 
