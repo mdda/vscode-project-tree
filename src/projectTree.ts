@@ -68,8 +68,9 @@ export class SymbolNode {
   }
 
   sort() {
-    this.children.sort(this.compareSymbols.bind(this));
-    this.children.forEach(child => child.sort());
+    return;
+    //this.children.sort(this.compareSymbols.bind(this));
+    //this.children.forEach(child => child.sort());
   }
 
   addChild(child: SymbolNode) {
@@ -81,8 +82,7 @@ export class SymbolNode {
 export class ProjectTreeTreeDataProvider
   implements TreeDataProvider<SymbolNode> {
   private _onDidChangeTreeData: EventEmitter<SymbolNode | null> = new EventEmitter<SymbolNode | null>();
-  readonly onDidChangeTreeData: Event<SymbolNode | null> = this
-    ._onDidChangeTreeData.event;
+  readonly onDidChangeTreeData: Event<SymbolNode | null> = this._onDidChangeTreeData.event;
 
   private context: ExtensionContext;
   private tree: SymbolNode;
@@ -95,6 +95,7 @@ export class ProjectTreeTreeDataProvider
 
   private getSymbols(document: TextDocument): Thenable<SymbolInformation[]> {
     console.log("ProjectTreeTreeDataProvider.getSymbols");
+    
     return commands.executeCommand<SymbolInformation[]>(
       "vscode.executeDocumentSymbolProvider",
       document.uri
@@ -226,18 +227,25 @@ export class ProjectTreeTreeDataProvider
 }
 
 export class ProjectTreeProvider {
-  symbolViewer: TreeView<SymbolNode>;
+  projectViewer: TreeView<SymbolNode>;
 
   constructor(context: ExtensionContext) {
     console.log("ProjectTreeProvider.constructor");
     
     const treeDataProvider = new ProjectTreeTreeDataProvider(context);
-    this.symbolViewer = window.createTreeView("projectTree", {
+    console.log("ProjectTreeProvider.constructor - created");
+    
+    this.projectViewer = window.createTreeView("projectTree", {
       treeDataProvider
     });
+    console.log("ProjectTreeProvider.constructor - added tree view");
+    
     commands.registerCommand("projectTree.refresh", () => {
       treeDataProvider.refresh();
     });
+    console.log("ProjectTreeProvider.constructor - registered refresh command");
+    
+    /*
     commands.registerCommand(
       "projectTree.revealRange",
       (editor: TextEditor, range: Range) => {
@@ -246,10 +254,14 @@ export class ProjectTreeProvider {
         commands.executeCommand("workbench.action.focusActiveEditorGroup");
       }
     );
+    */
+    /*
     window.onDidChangeActiveTextEditor(editor => treeDataProvider.refresh());
     workspace.onDidCloseTextDocument(document => treeDataProvider.refresh());
     workspace.onDidChangeTextDocument(event => treeDataProvider.refresh());
     workspace.onDidSaveTextDocument(document => treeDataProvider.refresh());
+    */
+    /*
     commands.registerTextEditorCommand(
       "projectTree.revealCurrentSymbol",
       (editor: TextEditor) => {
@@ -263,6 +275,7 @@ export class ProjectTreeProvider {
         }
       }
     );
+    */
   }
 }
 

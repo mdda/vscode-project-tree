@@ -5,6 +5,7 @@ Code foundation taken from (https://github.com/patrys/vscode-code-outline)
 symbolOutline -> projectTree
 SymbolOutlineProvider -> ProjectTreeProvider
 SymbolOutlineTreeDataProvider -> ProjectTreeTreeDataProvider
+symbolViewer -> projectViewer
 
 ## Running/debugging the Project Tree extension 
 
@@ -16,7 +17,8 @@ dnf install nodejs-typescript.noarch
   -  `cd .; code .`
   -  ?? `cd .; code --enable-proposed-api mdda.vscode-project-tree .`
 - `F5` to start debugging
-- Node dependencies view is shown in Package explorer view container in Activity bar.
+
+- Project Tree is shown in Package explorer view container in Activity bar
 
 
 
