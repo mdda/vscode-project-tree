@@ -271,7 +271,8 @@ export class ProjectTreeProvider {
     console.log("ProjectTreeProvider.constructor");
     
     const treeDataProvider = new ProjectTreeTreeDataProvider(context);
-    console.log("ProjectTreeProvider.constructor - created");
+    // terminal.integrated.cwd
+    console.log("ProjectTreeProvider.constructor - created", );
     
     // const currentFilePath: string = dirname(vscode.window.activeTextEditor.document.uri.fsPath);
     // const currentFilePath: string = dirname(vscode.window.activeTextEditor.document.uri.fsPath);
@@ -279,7 +280,7 @@ export class ProjectTreeProvider {
     let root = new ProjectTreeNode("ROOT", "INGORE");
     let group1 = new ProjectTreeNode("Hello", "NOOO");
     group1.addChild(new ProjectTreeNode("Hello-sub1", "hello.js"))
-    group1.addChild(new ProjectTreeNode("Hello-sub2", "hello.js"))
+    group1.addChild(new ProjectTreeNode("README.md", "./README.md"))
     root.addChild(group1)
     root.addChild(new ProjectTreeNode("Hello2", "hello2.js"))
     
@@ -301,23 +302,29 @@ export class ProjectTreeProvider {
         console.log("command : projectTree.openFile firing", path);
         
         let modifiedPath = path;
+        let fail=false;
           
         //  https://github.com/cg-cnu/vscode-super-new-file/blob/master/src/superNewFile.ts
-        if (lstatSync(modifiedPath).isFile()) {
-          console.log("command : projectTree.openFile opening", modifiedPath);
-          workspace.openTextDocument(modifiedPath)
-            .then((textDocument) => {
-              if (textDocument) {
-                window.showTextDocument(textDocument);
-              }
-              else {
-                window.showErrorMessage("Editor couldn't open the document!");
-              }
-            });
-        }        
-        else {
+        try {
+          if(lstatSync(modifiedPath).isFile()) {
+            console.log("command : projectTree.openFile opening", modifiedPath);
+            workspace.openTextDocument(modifiedPath)
+              .then((textDocument) => {
+                if (textDocument) {
+                  window.showTextDocument(textDocument);
+                }
+                else {
+                  window.showErrorMessage("Editor couldn't open the document!");
+                }
+              });
+          }
+          else { fail=true; }   
+        }
+        catch { fail=true; }
+        
+        if(fail) {
           console.log("command : projectTree.openFile could not open", modifiedPath);
-          window.showErrorMessage("Couldn't open the document '${modifiedPath}'");
+          window.showErrorMessage(`Couldn't open the document '${modifiedPath}'`);
         }
         
         
