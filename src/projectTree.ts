@@ -272,9 +272,13 @@ export class ProjectTreeProvider {
     
     const treeDataProvider = new ProjectTreeTreeDataProvider(context);
     // terminal.integrated.cwd
-    console.log("ProjectTreeProvider.constructor - created", );
     
-    // const currentFilePath: string = dirname(vscode.window.activeTextEditor.document.uri.fsPath);
+    // .activeTextEditor undefined for window.activeTextEditor.document.uri.fsPath 
+    // window is basically empty at launch
+    // workspace just has the welcome document
+    // commands is {}
+    console.log("ProjectTreeProvider.constructor - created", "");
+    
     // const currentFilePath: string = dirname(vscode.window.activeTextEditor.document.uri.fsPath);
 
     let root = new ProjectTreeNode("ROOT", "INGORE");
@@ -304,10 +308,14 @@ export class ProjectTreeProvider {
         let modifiedPath = path;
         let fail=false;
           
-        //  https://github.com/cg-cnu/vscode-super-new-file/blob/master/src/superNewFile.ts
+        // convert modifiedPath to path relative to initial launch location or .geany/ or .vscode/ ...
+        //  https://github.com/cg-cnu/vscode-super-new-file/blob/master/src/superNewFile.ts#L23
+        
         try {
           if(lstatSync(modifiedPath).isFile()) {
             console.log("command : projectTree.openFile opening", modifiedPath);
+            
+            //modifiedPath = '/home/andrewsm/OpenSource/vscode-project-tree/README.md';
             workspace.openTextDocument(modifiedPath)
               .then((textDocument) => {
                 if (textDocument) {
