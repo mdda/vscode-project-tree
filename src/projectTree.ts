@@ -19,6 +19,9 @@ import {
   Position
 } from "vscode";
 
+import { lstatSync, existsSync } from 'fs';
+import { dirname, join, normalize } from 'path';
+
 import { getIcon } from "./icons";
 
 let optsSortOrder: number[] = [];
@@ -270,6 +273,9 @@ export class ProjectTreeProvider {
     const treeDataProvider = new ProjectTreeTreeDataProvider(context);
     console.log("ProjectTreeProvider.constructor - created");
     
+    // const currentFilePath: string = dirname(vscode.window.activeTextEditor.document.uri.fsPath);
+    // const currentFilePath: string = dirname(vscode.window.activeTextEditor.document.uri.fsPath);
+
     let root = new ProjectTreeNode("ROOT", "INGORE");
     let group1 = new ProjectTreeNode("Hello", "NOOO");
     group1.addChild(new ProjectTreeNode("Hello-sub1", "hello.js"))
@@ -293,6 +299,28 @@ export class ProjectTreeProvider {
       "projectTree.openFile",
       (editor: TextEditor, path: string) => {
         console.log("command : projectTree.openFile firing", path);
+        
+        let modifiedPath = path;
+          
+        //  https://github.com/cg-cnu/vscode-super-new-file/blob/master/src/superNewFile.ts
+        if (lstatSync(modifiedPath).isFile()) {
+          console.log("command : projectTree.openFile opening", modifiedPath);
+          workspace.openTextDocument(modifiedPath)
+            .then((textDocument) => {
+              if (textDocument) {
+                window.showTextDocument(textDocument);
+              }
+              else {
+                window.showErrorMessage("Editor couldn't open the document!");
+              }
+            });
+        }        
+        else {
+          console.log("command : projectTree.openFile could not open", modifiedPath);
+          window.showErrorMessage("Couldn't open the document '${modifiedPath}'");
+        }
+        
+        
       }
     );
     
