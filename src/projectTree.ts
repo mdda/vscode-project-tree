@@ -16,6 +16,7 @@ import {
   commands,
   window,
   workspace,
+  //env,
   Position
 } from "vscode";
 
@@ -277,8 +278,15 @@ export class ProjectTreeProvider {
     // window is basically empty at launch
     // workspace just has the welcome document
     // commands is {}
-    console.log("ProjectTreeProvider.constructor - created", "");
+    console.log("ProjectTreeProvider.constructor - created", "context??");
     
+    // env.appRoot == /usr/share/code/resources/app
+    //console.log("ProjectTreeProvider.constructor - created", env.appRoot);  //
+    
+    //let folderName = workspace.name; // get the open folder name
+    //let folderPath = workspace.rootPath; // get the open folder path
+    //console.log("ProjectTreeProvider.constructor - created", folderName, folderPath);
+
     // const currentFilePath: string = dirname(vscode.window.activeTextEditor.document.uri.fsPath);
 
     let root = new ProjectTreeNode("ROOT", "INGORE");
