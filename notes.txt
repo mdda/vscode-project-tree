@@ -17,3 +17,29 @@ https://github.com/cg-cnu/vscode-super-new-file/blob/master/src/superNewFile.ts#
 https://code.visualstudio.com/docs/editor/extension-gallery
 https://www.google.com/search?biw=1093&bih=512&ei=d3MpXKDrFMi61fAP-fWz8AM&q=vscode+extension+get+workspace+path&oq=vscode+extension+get+path&gs_l=psy-ab.3.0.0i7i30l2j0i30.5259.8596..10935...0.0..0.101.673.7j1......0....1..gws-wiz.......0i71j33i22i29i30j0i13j0i8i13i30.8WIrR-_JIQw
 https://code.visualstudio.com/api/references/vscode-api#extensions
+
+
+https://code.visualstudio.com/api/extension-guides/tree-view
+https://marketplace.visualstudio.com/items?itemName=DaGhostman.vs-treeview
+https://people.revoledu.com/kardi/tutorial/VB/lesson06/Treeview.htm
+https://www.codeproject.com/Articles/23114/Working-with-TreeView-Controls
+
+Alternatives :
+https://www.maketecheasier.com/best-cross-platform-text-editors-for-programmers/
+https://mashtips.com/best-text-editors-for-pc/
+http://bluefish.openoffice.nl/index.html
+
+
+VIM plugins :
+https://github.com/scrooloose/nerdtree/tree/master/lib/nerdtree
+https://github.com/janlay/NERD-tree-project
+
+Notebooks as code :
+https://github.com/mwouts/jupytext
+
+Markdown websites :
+https://gist.github.com/johnloy/27dd124ad40e210e91c70dd1c24ac8c8
+https://news.ycombinator.com/item?id=19864947
+
+
+
