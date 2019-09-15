@@ -29,11 +29,6 @@ https://www.maketecheasier.com/best-cross-platform-text-editors-for-programmers/
 https://mashtips.com/best-text-editors-for-pc/
 http://bluefish.openoffice.nl/index.html
 
-
-VIM plugins :
-https://github.com/scrooloose/nerdtree/tree/master/lib/nerdtree
-https://github.com/janlay/NERD-tree-project
-
 Notebooks as code :
 https://github.com/mwouts/jupytext
 
