@@ -23,12 +23,12 @@ import {
 import { lstatSync, existsSync } from 'fs';
 import { dirname, join, normalize } from 'path';
 
-import { getIcon } from "./icons";
+//import { getIcon } from "./icons";
 
-let optsSortOrder: number[] = [];
-let optsTopLevel: number[] = [];
-let optsExpandNodes: number[] = [];
-let optsDoSort = true;
+//let optsSortOrder: number[] = [];
+//let optsTopLevel: number[] = [];
+//let optsExpandNodes: number[] = [];
+//let optsDoSort = true;
 
 export class ProjectTreeNode {
   parent?: ProjectTreeNode;

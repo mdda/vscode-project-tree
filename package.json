@@ -25,6 +25,24 @@
     ],
     "main": "./out/src/extension",
     "contributes": {
+        "viewsContainers": {
+            "activitybar": [
+                {
+                    "id": "project-tree-bar",
+                    "title": "Project Tree",
+                    "icon": "resources/icon.svg"
+                }
+            ]
+        },
+        "views": {
+            "outline": [
+                {
+                    "id": "projectTree",
+                    "name": "Layout",
+                    "when": "explorer"
+                }
+            ]
+        },
         "commands": [
             {
                 "command": "projectTree.refresh",
@@ -35,27 +53,11 @@
                 }
             },
             {
-                "command": "projectTree.revealCurrentSymbol",
-                "title": "Show in code outline"
+                "command": "projectTree.addEntry",
+                "title": "Add"
             }
         ],
-        "viewsContainers": {
-            "activitybar": [
-                {
-                    "id": "projecttree",
-                    "title": "Project Tree",
-                    "icon": "resources/icon.svg"
-                }
-            ]
-        },
-        "views": {
-            "outline": [
-                {
-                    "id": "projectTree",
-                    "name": "Project Tree"
-                }
-            ]
-        },
+        
         "menus": {
             "editor/context": [
                 {
@@ -124,10 +126,10 @@
         "test": "node ./node_modules/vscode/bin/test"
     },
     "scripts": {
-		"vscode:prepublish": "npm run compile",
-		"compile": "tsc -p ./",
-		"watch": "tsc -watch -p ./",
-		"postinstall": "node ./node_modules/vscode/bin/install"
+      "vscode:prepublish": "npm run compile",
+      "compile": "tsc -p ./",
+      "watch": "tsc -watch -p ./",
+      "postinstall": "node ./node_modules/vscode/bin/install"
     },
     "devDependencies": {
         "@types/mocha": "^2.2.32",
