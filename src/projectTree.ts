@@ -4,8 +4,10 @@ import * as vscode from 'vscode';
 export class ProjectTreeProvider {
 
   constructor(context: vscode.ExtensionContext) {
+    console.log("before : createTreeView('projectTree')");
     const view = vscode.window.createTreeView('projectTree', { treeDataProvider: aNodeWithIdTreeDataProvider(), showCollapseAll: true });
     /*
+    console.log("after  : createTreeView('projectTree')");
     vscode.commands.registerCommand('projectTree.reveal', async () => {
       const key = await vscode.window.showInputBox({ placeHolder: 'Type the label of the item to reveal' });
       if (key) {
@@ -19,6 +21,7 @@ export class ProjectTreeProvider {
       }
     });
     */
+    console.log("final  : createTreeView('projectTree')");
   }
 }
 

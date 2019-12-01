@@ -58,3 +58,14 @@ vscode-extension-samples/blob/master/tree-view-sample/src/fileExplorer.ts
 vscode-extension-samples/tree-view-sample/src/jsonOutline.ts
   This looks at the current editor text to produce treeview
 
+
+workspace.workspaceFolders
+
+git clone https://github.com/Microsoft/vscode-extension-samples
+cd ./vscode-extension-samples/tree-view-sample
+code .
+# code --enable-proposed-api mdda.vscode-project-tree .  # ??
+npm install # within "Terminal - new" in VScode
+# Then press 'F5' for extension debugging environment 
+
+TestView appears in Explorer view - but doesn't show anything when opened...

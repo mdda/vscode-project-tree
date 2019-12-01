@@ -25,7 +25,7 @@
     ],
     "main": "./out/src/extension",
     "contributes": {
-        "XXX-viewsContainers": {
+        "viewsContainers": {
             "activitybar": [
                 {
                     "id": "project-tree-bar",
@@ -35,11 +35,18 @@
             ]
         },
         "views": {
+            "project-tree-bar": [
+                {
+                    "id": "projectTree",
+                    "name": "Project Tree"
+                }
+            ]
+        },
+        "XXX-views": {
             "explorer": [
                 {
                     "id": "projectTree",
-                    "name": "Layout",
-                    "when": "explorer"
+                    "name": "Project Tree"
                 }
             ]
         },
@@ -55,6 +62,14 @@
             {
                 "command": "projectTree.addEntry",
                 "title": "Add"
+            },
+            {
+                "command": "projectTree.reveal",
+                "title": "Project Tree : Reveal"
+            },
+            {
+                "command": "projectTree.changeTitle",
+                "title": "Project Tree : Change Title"
             }
         ],
         "XXX-menus": {
