@@ -69,3 +69,10 @@ npm install # within "Terminal - new" in VScode
 # Then press 'F5' for extension debugging environment 
 
 TestView appears in Explorer view - but doesn't show anything when opened...
+
+
+
+This seems to explain it well : 
+https://medium.com/@sanaajani/creating-your-first-vs-code-extension-8dbdef2d6ad9
+
+

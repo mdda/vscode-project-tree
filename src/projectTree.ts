@@ -6,7 +6,12 @@ export class ProjectTreeProvider implements vscode.TreeDataProvider<ProjectEleme
   private _onDidChangeTreeData: vscode.EventEmitter<ProjectElement | undefined> = new vscode.EventEmitter<ProjectElement | undefined>();
   readonly onDidChangeTreeData: vscode.Event<ProjectElement | undefined> = this._onDidChangeTreeData.event;
 
+  private test_config: string = "";
+
   constructor(private workspaceRoot: string) {
+    //this.test_config = vscode.workspace.getConfiguration('projectTree').get('paths');
+    //console.log("", this.test_config);
+    console.log("workspaceRoot", workspaceRoot);
   }
 
   refresh(): void {

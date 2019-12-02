@@ -14,6 +14,7 @@
         "color": "#292d3e",
         "theme": "dark"
     },
+    "XXX-enableProposedApi": true,
     "engines": {
         "vscode": "^1.39.0"
     },
@@ -23,7 +24,7 @@
     "activationEvents": [
         "onView:projectTree"
     ],
-    "main": "./out/src/extension",
+    "main": "./out/extension.js",
     "contributes": {
         "viewsContainers": {
             "activitybar": [
@@ -91,6 +92,11 @@
             "type": "object",
             "title": "Project Tree configuration",
             "properties": {
+                "projectTree.paths": {
+                    "type": "string",
+                    "default": "HELLO WORLD",
+                    "description": "Seeing whether this will work"
+                },
                 "symbolOutline.doSort": {
                     "type": "boolean",
                     "default": false,
