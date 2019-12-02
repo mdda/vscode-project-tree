@@ -15,7 +15,7 @@
         "theme": "dark"
     },
     "engines": {
-        "vscode": "^1.23.0"
+        "vscode": "^1.39.0"
     },
     "categories": [
         "Other"
@@ -133,23 +133,23 @@
             }
         }
     },
-    "xscripts": {
-        "vscode:prepublish": "tsc -p ./",
-        "compile": "tsc -watch -p ./",
-        "postinstall": "node ./node_modules/vscode/bin/install",
-        "test": "node ./node_modules/vscode/bin/test"
-    },
     "scripts": {
         "vscode:prepublish": "npm run compile",
         "compile": "tsc -p ./",
         "watch": "tsc -watch -p ./",
-        "postinstall": "node ./node_modules/vscode/bin/install"
+        "XXX-postinstall": "node ./node_modules/vscode/bin/install"
     },
     "devDependencies": {
+        "@types/mkdirp": "^0.5.2",
+        "@types/node": "^10.12.21",
+        "@types/vscode": "^1.39.0",
+        "typescript": "^3.5.1",
+        "tslint": "^5.12.1"
+    },
+    "XXX-devDependencies": {
         "@types/mocha": "^2.2.32",
         "@types/node": "^6.0.40",
         "mocha": "^2.3.3",
-        "typescript": "^2.0.3",
-        "vscode": "^1.1.17"
+        "typescript": "^3.5.1"
     }
 }

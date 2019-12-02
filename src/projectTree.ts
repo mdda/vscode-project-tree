@@ -1,107 +1,71 @@
 import * as vscode from 'vscode';
+import * as fs from 'fs';
+import * as path from 'path';
 
-//export class TestView {
-export class ProjectTreeProvider {
+export class ProjectTreeProvider implements vscode.TreeDataProvider<ProjectElement> {
+  private _onDidChangeTreeData: vscode.EventEmitter<ProjectElement | undefined> = new vscode.EventEmitter<ProjectElement | undefined>();
+  readonly onDidChangeTreeData: vscode.Event<ProjectElement | undefined> = this._onDidChangeTreeData.event;
 
-  constructor(context: vscode.ExtensionContext) {
-    console.log("before : createTreeView('projectTree')");
-    const view = vscode.window.createTreeView('projectTree', { treeDataProvider: aNodeWithIdTreeDataProvider(), showCollapseAll: true });
-    /*
-    console.log("after  : createTreeView('projectTree')");
-    vscode.commands.registerCommand('projectTree.reveal', async () => {
-      const key = await vscode.window.showInputBox({ placeHolder: 'Type the label of the item to reveal' });
-      if (key) {
-        await view.reveal({ key }, { focus: true, select: false, expand: true });
-      }
-    });
-    vscode.commands.registerCommand('projectTree.changeTitle', async () => {
-      const title = await vscode.window.showInputBox({ prompt: 'Type the new title for the Test View', placeHolder: view.title });
-      if (title) {
-        view.title = title;
-      }
-    });
-    */
-    console.log("final  : createTreeView('projectTree')");
+  constructor(private workspaceRoot: string) {
   }
-}
 
-const tree = {
-  'a': {
-    'aa': {
-      'aaa': {
-        'aaaa': {
-          'aaaaa': {
-            'aaaaaa': {
-
-            }
-          }
-        }
-      }
-    },
-    'ab': {}
-  },
-  'b': {
-    'ba': {},
-    'bb': {}
+  refresh(): void {
+    this._onDidChangeTreeData.fire();
   }
-};
-let nodes = {};
 
-function aNodeWithIdTreeDataProvider(): vscode.TreeDataProvider<{ key: string }> {
-  return {
-    getChildren: (element: { key: string }): { key: string }[] => {
-      return getChildren(element ? element.key : undefined).map(key => getNode(key));
-    },
-    getTreeItem: (element: { key: string }): vscode.TreeItem => {
-      const treeItem = getTreeItem(element.key);
-      treeItem.id = element.key;
-      return treeItem;
-    },
-    getParent: ({ key }: { key: string }): { key: string } => {
-      const parentKey = key.substring(0, key.length - 1);
-      return parentKey ? new Key(parentKey) : void 0;
+  getTreeItem(element: ProjectElement): vscode.TreeItem {
+    return element;
+  }
+
+  getChildren(element?: ProjectElement): Thenable<ProjectElement[]> {
+    if (!this.workspaceRoot) {
+      vscode.window.showInformationMessage('No project tree yet');
+      return Promise.resolve([]);
     }
-  };
-}
 
-function getChildren(key: string): string[] {
-  if (!key) {
-    return Object.keys(tree);
-  }
-  let treeElement = getTreeElement(key);
-  if (treeElement) {
-    return Object.keys(treeElement);
-  }
-  return [];
-}
-
-function getTreeItem(key: string): vscode.TreeItem2 {
-  const treeElement = getTreeElement(key);
-  return {
-    label: <vscode.TreeItemLabel>{ label: key, highlights: key.length > 1 ? [[key.length - 2, key.length - 1]] : void 0},
-    tooltip: `Tooltip for ${key}`,
-    collapsibleState: treeElement && Object.keys(treeElement).length ? vscode.TreeItemCollapsibleState.Collapsed : vscode.TreeItemCollapsibleState.None
-  };
-}
-
-function getTreeElement(element): any {
-  let parent = tree;
-  for (let i = 0; i < element.length; i++) {
-    parent = parent[element.substring(0, i + 1)];
-    if (!parent) {
-      return null;
+    if(element) {
+      // This has parents
     }
+    else {
+      // This is root
+      return Promise.resolve([]);
+    }
+
   }
-  return parent;
+
+  private pathExists(p: string): boolean {
+    try {
+      fs.accessSync(p);
+    } catch (err) {
+      return false;
+    }
+
+    return true;
+  }
 }
 
-function getNode(key: string): { key: string } {
-  if (!nodes[key]) {
-    nodes[key] = new Key(key);
+export class ProjectElement extends vscode.TreeItem {
+  constructor(
+    public readonly label: string,
+    private version: string,
+    public readonly collapsibleState: vscode.TreeItemCollapsibleState,
+    public readonly command?: vscode.Command
+  ) {
+    super(label, collapsibleState);
   }
-  return nodes[key];
-}
 
-class Key {
-  constructor(readonly key: string) { }
+  get tooltip(): string {
+    return `${this.label}-${this.version}`;
+  }
+
+  get description(): string {
+    return this.version;
+  }
+
+  iconPath = {
+    light: path.join(__filename, '..', '..', 'resources', 'light', 'dependency.svg'),
+    dark: path.join(__filename, '..', '..', 'resources', 'dark', 'dependency.svg')
+  };
+
+  contextValue = 'project_element';
 }
