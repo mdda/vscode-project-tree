@@ -2,7 +2,12 @@ import * as vscode from 'vscode';
 import * as fs from 'fs';
 import * as path from 'path';
 
+import * as ini from 'ini';
+
+
 const config_dir_choices = ['./.editor', './.geany', ];
+const config_tree_layout_file='project-tree-layout.ini', config_session_file='session.ini';
+
 
 export class ProjectTreeProvider implements vscode.TreeDataProvider<ProjectElement> {
   private _onDidChangeTreeData: vscode.EventEmitter<ProjectElement | undefined> = new vscode.EventEmitter<ProjectElement | undefined>();
@@ -10,6 +15,9 @@ export class ProjectTreeProvider implements vscode.TreeDataProvider<ProjectEleme
 
   private test_config: string = "";
   private config_dir: string = undefined;
+  
+  private tree_path: string = undefined;
+  private tree_root = {};
   
   constructor(private vscode_launch_directory: string) {
     console.log("vscode_launch_directory", vscode_launch_directory);
@@ -22,10 +30,38 @@ export class ProjectTreeProvider implements vscode.TreeDataProvider<ProjectEleme
       console.log("Finding config");
       var valid_dirs = config_dir_choices.map( dir => path.join(vscode_launch_directory, dir)) .filter( dir => this.pathExists(dir) );
       console.log("valid_dirs", valid_dirs);
+      
       if(valid_dirs.length>0) {
         this.config_dir = valid_dirs[0];
         
-        // Read in the config...
+        this.tree_path = path.join(this.config_dir, config_tree_layout_file);
+        if( this.pathExists(this.tree_path) ) {
+          // Read in the config...  :: https://github.com/npm/ini
+          var config_mangled = ini.parse(fs.readFileSync(this.tree_path, 'utf-8'))
+          
+          // Strangely, the initial '.' is stripped off the section names : Add back
+          var config = Object.keys(config_mangled['']).reduce( (acc, a) => {
+            acc[ '.'+a ] = config_mangled[''][a];
+            return acc;
+          }, {});
+          console.log("config", config);
+          
+          function _load_project_tree_branch(section, arr) {
+            console.log("_load_project_tree_branch", section);
+            
+            
+            
+            
+            
+          }
+          
+          if( config['.'] ) {
+            _load_project_tree_branch('.', this.tree_root)
+          }
+          
+          
+        }
+        
         
       }
     }

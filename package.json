@@ -150,6 +150,7 @@
         "@types/node": "^10.12.21",
         "@types/vscode": "^1.39.0",
         "typescript": "^3.5.1",
+        "ini": "*",
         "tslint": "^5.12.1"
     },
     "XXX-devDependencies": {
