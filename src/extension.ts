@@ -16,7 +16,7 @@ export function activate(context: vscode.ExtensionContext) {
   // https://aka.ms/vscode-eliminating-rootpath
   // 'workspace.rootPath' is deprecated and should no longer be used. 
   // Please use 'workspace.workspaceFolders' instead
-  console.log(vscode.workspace.workspaceFolders);
+  console.log("vscode.workspace.workspaceFolders", vscode.workspace.workspaceFolders);
   
   const projectTreeProvider = new ProjectTreeProvider("Not yet");  
 }
