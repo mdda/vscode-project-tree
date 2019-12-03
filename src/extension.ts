@@ -16,7 +16,15 @@ export function activate(context: vscode.ExtensionContext) {
   // https://aka.ms/vscode-eliminating-rootpath
   // 'workspace.rootPath' is deprecated and should no longer be used. 
   // Please use 'workspace.workspaceFolders' instead
-  console.log("vscode.workspace.workspaceFolders", vscode.workspace.workspaceFolders);
+  //console.log("vscode.workspace.workspaceFolders", vscode.workspace.workspaceFolders);
+
+  //console.log("vscode", vscode);
   
-  const projectTreeProvider = new ProjectTreeProvider("Not yet");  
+  // Detect active text editor window path ::
+  /// https://github.com/Tyriar/vscode-terminal-here/blob/master/src/extension.ts
+  
+  // Go with the process path : 
+  var editor_path = process.cwd();
+  
+  const projectTreeProvider = new ProjectTreeProvider(editor_path);  
 }

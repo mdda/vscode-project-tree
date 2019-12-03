@@ -7,13 +7,14 @@ export class ProjectTreeProvider implements vscode.TreeDataProvider<ProjectEleme
   readonly onDidChangeTreeData: vscode.Event<ProjectElement | undefined> = this._onDidChangeTreeData.event;
 
   private test_config: string = "";
-  //private workspaceRoot: string = undefined;  // defined in constructor
+  private config_dir: string = undefined;
 
-  constructor(private workspaceRoot: string) {
-    console.log("workspaceRoot", workspaceRoot);
+  constructor(private vscode_launch_directory: string) {
+    console.log("vscode_launch_directory", vscode_launch_directory);
+    
+    // unfortutely, this is un-parsed...
     this.test_config = vscode.workspace.getConfiguration('projectTree').get('paths');
     console.log("this.test_config", this.test_config);
-    //this.workspaceRoot = workspaceRoot;  // defined in constructor
   }
 
   refresh(): void {
@@ -25,7 +26,7 @@ export class ProjectTreeProvider implements vscode.TreeDataProvider<ProjectEleme
   }
 
   getChildren(element?: ProjectElement): Thenable<ProjectElement[]> {
-    if (!this.workspaceRoot) {
+    if (!this.config_dir) {
       vscode.window.showInformationMessage('No project tree yet');
       return Promise.resolve([]);
     }

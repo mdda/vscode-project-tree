@@ -94,7 +94,7 @@
             "properties": {
                 "projectTree.paths": {
                     "type": "string",
-                    "default": "HELLO WORLD",
+                    "default": "DefaultConfig.path",
                     "description": "Seeing whether this will work"
                 },
                 "symbolOutline.doSort": {
