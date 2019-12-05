@@ -24,12 +24,11 @@ export class ProjectTreeProvider implements vscode.TreeDataProvider<ProjectEleme
     
     // unfortutely, this is un-parsed...
     this.test_config = vscode.workspace.getConfiguration('projectTree').get('paths');
-    console.log("this.test_config", this.test_config);
+    //console.log("this.test_config", this.test_config);
     
     if(this.pathExists(vscode_launch_directory)) {
-      console.log("Finding config");
       var valid_dirs = config_dir_choices.map( dir => path.join(vscode_launch_directory, dir)) .filter( dir => this.pathExists(dir) );
-      console.log("valid_dirs", valid_dirs);
+      //console.log("valid_dirs", valid_dirs);
       
       if(valid_dirs.length>0) {
         this.config_dir = valid_dirs[0];
@@ -39,16 +38,37 @@ export class ProjectTreeProvider implements vscode.TreeDataProvider<ProjectEleme
           // Read in the config...  :: https://github.com/npm/ini
           var config_mangled = ini.parse(fs.readFileSync(this.tree_path, 'utf-8'))
           
-          // Strangely, the initial '.' is stripped off the section names : Add back
+          // Strangely, the initial '.' could be stripped off the section names : Add back
           var config = Object.keys(config_mangled['']).reduce( (acc, a) => {
-            acc[ '.'+a ] = config_mangled[''][a];
+            if(a.substr(0,1)=='.') {
+              acc[ a ] = config_mangled[''][a];
+            }
+            else {
+              acc[ '.'+a ] = config_mangled[''][a];
+            }
             return acc;
           }, {});
-          console.log("config", config);
+          //console.log("config", config);
           
           function _load_project_tree_branch(section, arr) {
             console.log("_load_project_tree_branch", section);
             
+            const key_matcher = /(\d+)-?(\S*)/;
+            var section_gather={};
+            
+            Object.keys( config[section] ).forEach( k => {
+              var v = config[section][k];
+              var group = v.match( key_matcher );
+              if(group) {
+                var order = group[0] | 0;
+                if(! section_gather[order]) {
+                  section_gather[order]={};
+                }
+                section_gather[order][group[1] || ''] = v;
+              }
+            });
+            console.log("section_gather", section_gather);
+        
             
             
             
