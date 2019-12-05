@@ -176,6 +176,9 @@ export class ProjectElement extends vscode.TreeItem {
   }
 
   get tooltip(): string {
+    if('f'==this.type) {
+      return `${this.filename}`;
+    }
     return `${this.label}`;
   }
 
