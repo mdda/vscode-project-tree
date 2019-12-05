@@ -97,12 +97,12 @@
                     "default": "DefaultConfig.path",
                     "description": "Seeing whether this will work"
                 },
-                "symbolOutline.doSort": {
+                "XXX-symbolOutline.doSort": {
                     "type": "boolean",
                     "default": false,
                     "description": "Sort the outline"
                 },
-                "symbolOutline.expandNodes": {
+                "XXX-symbolOutline.expandNodes": {
                     "type": "array",
                     "default": [
                         "Module",
@@ -115,7 +115,7 @@
                     ],
                     "description": "Kinds of nodes to be expanded automatically."
                 },
-                "symbolOutline.sortOrder": {
+                "XXX-symbolOutline.sortOrder": {
                     "type": "array",
                     "default": [
                         "Class",
@@ -129,7 +129,7 @@
                     ],
                     "description": "Order to the sort symbols in, if sorted.  * is placeholder for all symbols not explicitly listed."
                 },
-                "symbolOutline.topLevel": {
+                "XXX-symbolOutline.topLevel": {
                     "type": "array",
                     "default": [
                         "*"

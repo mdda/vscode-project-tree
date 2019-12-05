@@ -27,4 +27,5 @@ export function activate(context: vscode.ExtensionContext) {
   var editor_path = process.cwd();
   
   const projectTreeProvider = new ProjectTreeProvider(editor_path);  
+  vscode.window.registerTreeDataProvider('projectTree', projectTreeProvider);
 }
