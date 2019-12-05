@@ -17,7 +17,7 @@ export class ProjectTreeProvider implements vscode.TreeDataProvider<ProjectEleme
   private config_dir: string = undefined;
   
   private tree_path: string = undefined;
-  private tree_root = {};
+  private tree_root: ProjectElement[] = [];
   
   constructor(private vscode_launch_directory: string) {
     console.log("vscode_launch_directory", vscode_launch_directory);
@@ -58,25 +58,52 @@ export class ProjectTreeProvider implements vscode.TreeDataProvider<ProjectEleme
             
             Object.keys( config[section] ).forEach( k => {
               var v = config[section][k];
-              var group = v.match( key_matcher );
+              var group = k.match( key_matcher );
+              //console.log(k, v, group);
               if(group) {
-                var order = group[0] | 0;
+                var order = group[1];
                 if(! section_gather[order]) {
                   section_gather[order]={};
                 }
-                section_gather[order][group[1] || ''] = v;
+                section_gather[order][group[2] || ''] = v;
               }
             });
-            console.log("section_gather", section_gather);
+            //console.log("section_gather", section_gather);
         
+            // Now, in numerical order...
+            var ordered = Object.keys(section_gather).sort((n1,n2) => Number(n1) - Number(n2));
             
-            
-            
-            
+            ordered.forEach( k => {
+              var vd=section_gather[k];
+              if( vd[''] ) {
+                // This is a file entry
+                var filename = vd[''];
+                var file_element = new ProjectElement('f', path.basename(filename),
+                                      vscode.TreeItemCollapsibleState.None,
+                                      filename);
+                arr.push( file_element );
+              }
+              else if( vd['group'] ) {
+                // This is a Group entry
+                var group = vd['group'];
+                
+                // Add the group to the tree, and recursively go after that section...
+                var group_element = new ProjectElement('g', group,
+                                      vscode.TreeItemCollapsibleState.Collapsed);
+                arr.push( group_element );
+                
+                // Descend with parent=current
+                _load_project_tree_branch(section+'/'+group, group_element.children )  // Add to this group's children array
+              }
+              
+            });
+            return; // end of _load_project_tree_branch
           }
           
           if( config['.'] ) {
             _load_project_tree_branch('.', this.tree_root)
+            
+            console.log( this.tree_root );
           }
           
           
@@ -96,17 +123,20 @@ export class ProjectTreeProvider implements vscode.TreeDataProvider<ProjectEleme
   }
 
   getChildren(element?: ProjectElement): Thenable<ProjectElement[]> {
-    if (!this.config_dir) {
+      if (!this.config_dir) {
       vscode.window.showInformationMessage('No project tree yet');
       return Promise.resolve([]);
     }
 
     if(element) {
       // This has parents
+      console.log("Requested leaf data");
+      return Promise.resolve(element.children);
     }
     else {
       // This is root
-      return Promise.resolve([]);
+      console.log("Requested root of tree");
+      return Promise.resolve(this.tree_root);
     }
 
   }
@@ -114,7 +144,8 @@ export class ProjectTreeProvider implements vscode.TreeDataProvider<ProjectEleme
   private pathExists(p: string): boolean {
     try {
       fs.accessSync(p);
-    } catch (err) {
+    } 
+    catch (err) {
       return false;
     }
 
@@ -123,22 +154,34 @@ export class ProjectTreeProvider implements vscode.TreeDataProvider<ProjectEleme
 }
 
 export class ProjectElement extends vscode.TreeItem {
+  public position:Number=-1; // Used to keep track of operations
+  public children: ProjectElement[] = [];
+  
   constructor(
+    public readonly type: string, 
     public readonly label: string,
-    private version: string,
     public readonly collapsibleState: vscode.TreeItemCollapsibleState,
-    public readonly command?: vscode.Command
+    public readonly filename?: string
+    
+    //public readonly command?: vscode.Command
+    //private version: string,
   ) {
     super(label, collapsibleState);
+    if('f'==type) {
+      this.filename = filename;
+    }
+    else {
+      this.children=[];
+    }
   }
 
   get tooltip(): string {
-    return `${this.label}-${this.version}`;
+    return `${this.label}`;
   }
 
-  get description(): string {
-    return this.version;
-  }
+  //get description(): string {
+  //  return this.version;
+  //}
 
   iconPath = {
     light: path.join(__filename, '..', '..', 'resources', 'light', 'dependency.svg'),
@@ -147,3 +190,5 @@ export class ProjectElement extends vscode.TreeItem {
 
   contextValue = 'project_element';
 }
+
+
