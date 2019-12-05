@@ -18,6 +18,7 @@ export class ProjectTreeProvider implements vscode.TreeDataProvider<ProjectEleme
   
   private tree_path: string = undefined;
   private tree_root: ProjectElement[] = [];
+  private tree_id_last: number = 0;
   
   constructor(private vscode_launch_directory: string) {
     console.log("vscode_launch_directory", vscode_launch_directory);
@@ -50,6 +51,7 @@ export class ProjectTreeProvider implements vscode.TreeDataProvider<ProjectEleme
           }, {});
           //console.log("config", config);
           
+          var tree_id=0;
           function _load_project_tree_branch(section, arr) {
             console.log("_load_project_tree_branch", section);
             
@@ -78,7 +80,8 @@ export class ProjectTreeProvider implements vscode.TreeDataProvider<ProjectEleme
               if( vd[''] ) {
                 // This is a file entry
                 var filename = vd[''];
-                var file_element = new ProjectElement('f', path.basename(filename),
+                var file_element = new ProjectElement(tree_id++, 
+                                      'f', path.basename(filename),
                                       vscode.TreeItemCollapsibleState.None,
                                       filename);
                 arr.push( file_element );
@@ -88,7 +91,8 @@ export class ProjectTreeProvider implements vscode.TreeDataProvider<ProjectEleme
                 var group = vd['group'];
                 
                 // Add the group to the tree, and recursively go after that section...
-                var group_element = new ProjectElement('g', group,
+                var group_element = new ProjectElement(tree_id++, 
+                                      'g', group,
                                       vscode.TreeItemCollapsibleState.Collapsed);
                 arr.push( group_element );
                 
@@ -102,7 +106,7 @@ export class ProjectTreeProvider implements vscode.TreeDataProvider<ProjectEleme
           
           if( config['.'] ) {
             _load_project_tree_branch('.', this.tree_root)
-            
+            this.tree_id_last = tree_id;
             console.log( this.tree_root );
           }
           
@@ -140,6 +144,10 @@ export class ProjectTreeProvider implements vscode.TreeDataProvider<ProjectEleme
     }
 
   }
+  
+  clickFile(id: number): void {
+    console.log(`You clicked on '${id}'`); 
+  }
 
   private pathExists(p: string): boolean {
     try {
@@ -154,10 +162,10 @@ export class ProjectTreeProvider implements vscode.TreeDataProvider<ProjectEleme
 }
 
 export class ProjectElement extends vscode.TreeItem {
-  public position:Number=-1; // Used to keep track of operations
   public children: ProjectElement[] = [];
   
   constructor(
+    public readonly ptid: number, 
     public readonly type: string, 
     public readonly label: string,
     public readonly collapsibleState: vscode.TreeItemCollapsibleState,
@@ -169,6 +177,12 @@ export class ProjectElement extends vscode.TreeItem {
     super(label, collapsibleState);
     if('f'==type) {
       this.filename = filename;
+      
+      this.command = {
+        command: "projectTree.clickFile",
+        title: "Click File",
+        arguments: [this.ptid]
+      };      
     }
     else {
       this.children=[];

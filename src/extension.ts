@@ -26,6 +26,7 @@ export function activate(context: vscode.ExtensionContext) {
   // Go with the process path : 
   var editor_path = process.cwd();
   
-  const projectTreeProvider = new ProjectTreeProvider(editor_path);  
+  const projectTreeProvider = new ProjectTreeProvider(editor_path); 
+  vscode.commands.registerCommand("projectTree.clickFile", (id: number) => projectTreeProvider.clickFile(id));
   vscode.window.registerTreeDataProvider('projectTree', projectTreeProvider);
 }
