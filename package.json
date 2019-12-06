@@ -61,19 +61,65 @@
                 }
             },
             {
-                "command": "projectTree.addEntry",
-                "title": "Add"
+                "command": "projectTree.save_session",
+                "title": "Save Session"
             },
             {
-                "command": "projectTree.reveal",
-                "title": "Project Tree : Reveal"
+                "command": "projectTree.save_project",
+                "title": "Save Project"
             },
             {
-                "command": "projectTree.changeTitle",
-                "title": "Project Tree : Change Title"
+                "command": "projectTree.rename",
+                "title": "Rename"
+            },
+            {
+                "command": "projectTree.move",
+                "title": "Move"
+            },
+            {
+                "command": "projectTree.delete",
+                "title": "Delete"
             }
         ],
+        "menus": {
+            "view/item/context": [
+                {
+                    "command": "projectTree.rename",
+                    "when": "view == projectTree",
+                    "group": "1_projecttree@1"
+                },
+                {
+                    "command": "projectTree.move",
+                    "when": "view == projectTree",
+                    "group": "1_projectTree@2"
+                },
+                {
+                    "command": "projectTree.delete",
+                    "when": "view == projectTree",
+                    "group": "1_projectTree@3"
+                }
+            ],
+            "view/title": [
+                {
+                    "command": "projectTree.save_session",
+                    "when": "view == projectTree",
+                    "group": "1_projectTree@1"
+                },
+                {
+                    "command": "projectTree.save_project",
+                    "when": "view == projectTree",
+                    "group": "1_projectTree@1"
+                }
+            ]
+        },
         "XXX-menus": {
+            "XXX-view/title": [
+                {
+                    "command": "projectTree.refresh",
+                    "when": "view == projectTree",
+                    "group": "inline"
+                }
+            ],
             "editor/context": [
                 {
                     "command": "projectTree.revealCurrentSymbol",

@@ -20,6 +20,8 @@ export class ProjectTreeProvider implements vscode.TreeDataProvider<ProjectEleme
   private tree_root: ProjectElement[] = [];
   private tree_id_last: number = 1;
   
+  private move_from_ptid: number = -1;
+  
   constructor(private vscode_launch_directory: string) {
     console.log("vscode_launch_directory", vscode_launch_directory);
     
@@ -146,10 +148,25 @@ export class ProjectTreeProvider implements vscode.TreeDataProvider<ProjectEleme
   
   clickFile(id: number): void {
     console.log(`You clicked on File '${id}'`); 
+    if(this.move_from_ptid<0) {
+      // Open up the file in the editor
+      
+    }
+    else { // We're doing a move to command here
+      
+      this.move_from_ptid=-1;  // Finished with mode
+    }
   }
 
   clickGroup(id: number): void {
     console.log(`You clicked on Group '${id}'`); 
+    if(this.move_from_ptid<0) {
+      // Not sure why we'd click on a Group label itself
+    }
+    else { // We're doing a move to command here
+      
+      this.move_from_ptid=-1;  // Finished with mode
+    }
   }
 
   private pathExists(p: string): boolean {
