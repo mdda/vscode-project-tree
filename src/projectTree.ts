@@ -18,7 +18,7 @@ export class ProjectTreeProvider implements vscode.TreeDataProvider<ProjectEleme
   
   private tree_path: string = undefined;
   private tree_root: ProjectElement[] = [];
-  private tree_id_last: number = 0;
+  private tree_id_last: number = 1;
   
   constructor(private vscode_launch_directory: string) {
     console.log("vscode_launch_directory", vscode_launch_directory);
@@ -51,7 +51,7 @@ export class ProjectTreeProvider implements vscode.TreeDataProvider<ProjectEleme
           }, {});
           //console.log("config", config);
           
-          var tree_id=0;
+          var tree_id=this.tree_id_last;
           function _load_project_tree_branch(section, arr) {
             console.log("_load_project_tree_branch", section);
             
@@ -127,13 +127,12 @@ export class ProjectTreeProvider implements vscode.TreeDataProvider<ProjectEleme
   }
 
   getChildren(element?: ProjectElement): Thenable<ProjectElement[]> {
-      if (!this.config_dir) {
+    if (!this.config_dir) {
       vscode.window.showInformationMessage('No project tree yet');
       return Promise.resolve([]);
     }
 
-    if(element) {
-      // This has parents
+    if(element) { // This is just a regular node
       console.log("Requested leaf data");
       return Promise.resolve(element.children);
     }
@@ -146,7 +145,11 @@ export class ProjectTreeProvider implements vscode.TreeDataProvider<ProjectEleme
   }
   
   clickFile(id: number): void {
-    console.log(`You clicked on '${id}'`); 
+    console.log(`You clicked on File '${id}'`); 
+  }
+
+  clickGroup(id: number): void {
+    console.log(`You clicked on Group '${id}'`); 
   }
 
   private pathExists(p: string): boolean {
@@ -186,6 +189,11 @@ export class ProjectElement extends vscode.TreeItem {
     }
     else {
       this.children=[];
+      this.command = {
+        command: "projectTree.clickGroup",
+        title: "Click Group",
+        arguments: [this.ptid]
+      };      
     }
   }
 
