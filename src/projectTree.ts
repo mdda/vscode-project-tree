@@ -17,9 +17,11 @@ export class ProjectTreeProvider implements vscode.TreeDataProvider<ProjectEleme
   private config_dir: string = undefined;
   
   private tree_path: string = undefined;
-  private tree_root: ProjectElement[] = [];
-  private tree_id_last: number = 1;
+  //private tree_root: ProjectElement[] = [];
   
+  private tree_id_last: number = 1;
+  // Not actually used as a TreeView element, just as a holder for children
+  private tree_root: ProjectElement = undefined;
   private move_from_ptid: number = -1;
   
   constructor(private vscode_launch_directory: string) {
@@ -28,6 +30,11 @@ export class ProjectTreeProvider implements vscode.TreeDataProvider<ProjectEleme
     // unfortutely, this is un-parsed...
     this.test_config = vscode.workspace.getConfiguration('projectTree').get('paths');
     //console.log("this.test_config", this.test_config);
+    
+    var tree_id=this.tree_id_last;
+    this.tree_root = new ProjectElement(tree_id++, undefined, // parent=undefined
+                                         'g', '', // empty group name for tree root
+                                         vscode.TreeItemCollapsibleState.Expanded); 
     
     if(this.pathExists(vscode_launch_directory)) {
       var valid_dirs = config_dir_choices.map( dir => path.join(vscode_launch_directory, dir)) .filter( dir => this.pathExists(dir) );
@@ -53,8 +60,7 @@ export class ProjectTreeProvider implements vscode.TreeDataProvider<ProjectEleme
           }, {});
           //console.log("config", config);
           
-          var tree_id=this.tree_id_last;
-          function _load_project_tree_branch(section, arr) {
+          function _load_project_tree_branch(section, parent) {
             console.log("_load_project_tree_branch", section);
             
             const key_matcher = /(\d+)-?(\S*)/;
@@ -82,24 +88,24 @@ export class ProjectTreeProvider implements vscode.TreeDataProvider<ProjectEleme
               if( vd[''] ) {
                 // This is a file entry
                 var filename = vd[''];
-                var file_element = new ProjectElement(tree_id++, 
+                var file_element = new ProjectElement(tree_id++, parent,
                                       'f', path.basename(filename),
                                       vscode.TreeItemCollapsibleState.None,
                                       filename);
-                arr.push( file_element );
+                parent.children.push( file_element );
               }
               else if( vd['group'] ) {
                 // This is a Group entry
                 var group = vd['group'];
                 
                 // Add the group to the tree, and recursively go after that section...
-                var group_element = new ProjectElement(tree_id++, 
+                var group_element = new ProjectElement(tree_id++, parent,
                                       'g', group,
                                       vscode.TreeItemCollapsibleState.Collapsed);
-                arr.push( group_element );
+                parent.children.push( group_element );
                 
-                // Descend with parent=current
-                _load_project_tree_branch(section+'/'+group, group_element.children )  // Add to this group's children array
+                // Descend with parent = currently-being-added-group
+                _load_project_tree_branch(section+'/'+group, group_element )  // Add to this group's children array
               }
               
             });
@@ -120,30 +126,42 @@ export class ProjectTreeProvider implements vscode.TreeDataProvider<ProjectEleme
     }
   }
 
-  refresh(): void {
-    this._onDidChangeTreeData.fire();
+  //refresh(): void {
+  //  this._onDidChangeTreeData.fire();
+  //}
+  
+  findElementInTree(id: number): ProjectElement {
+    function findElementInThis(element: ProjectElement) {
+      if(id==element.ptid) {
+        return element;
+      }
+      if('g'==element.type) {
+        var found=element.children.filter( c => findElementInThis(c) );
+        if(found.length>0) {
+          return found[0];  // Just one match is sufficient
+        }
+      }
+      return undefined;
+    }
+    
+    return findElementInThis(this.tree_root);
   }
-
+  
   getTreeItem(element: ProjectElement): vscode.TreeItem {
     return element;
   }
 
   getChildren(element?: ProjectElement): Thenable<ProjectElement[]> {
+    console.log("Requested leaf data");
     if (!this.config_dir) {
       vscode.window.showInformationMessage('No project tree yet');
       return Promise.resolve([]);
     }
-
-    if(element) { // This is just a regular node
-      console.log("Requested leaf data");
-      return Promise.resolve(element.children);
-    }
-    else {
-      // This is root
+    if(!element) {
       console.log("Requested root of tree");
-      return Promise.resolve(this.tree_root);
+      element=this.tree_root;
     }
-
+    return Promise.resolve(element.children);
   }
   
   clickFile(id: number): void {
@@ -169,6 +187,20 @@ export class ProjectTreeProvider implements vscode.TreeDataProvider<ProjectEleme
     }
   }
 
+  add_by_id(id: number): void {
+    console.log(`You clicked on Add to location '${id}'`); 
+    var element = this.findElementInTree(id);
+    if(element) {
+      console.log(`  Found the element : Label '{element.label}'`); 
+    }
+  }
+
+  add(element: ProjectElement): void {
+    console.log(`You clicked on Add to location '${element.ptid}'`);
+    
+  }
+
+
   private pathExists(p: string): boolean {
     try {
       fs.accessSync(p);
@@ -186,13 +218,16 @@ export class ProjectElement extends vscode.TreeItem {
   
   constructor(
     public readonly ptid: number, 
+    public readonly parent: ProjectElement,
     public readonly type: string, 
     public readonly label: string,
+    
+    // https://code.visualstudio.com/api/references/vscode-api#TreeItemCollapsibleState
     public readonly collapsibleState: vscode.TreeItemCollapsibleState,
+    
     public readonly filename?: string
     
     //public readonly command?: vscode.Command
-    //private version: string,
   ) {
     super(label, collapsibleState);
     if('f'==type) {

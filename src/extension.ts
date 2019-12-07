@@ -1,7 +1,7 @@
 import * as vscode from "vscode"; 
 
 //import { SymbolOutlineProvider } from "./symbolOutline";
-import { ProjectTreeProvider } from "./projectTree";
+import { ProjectTreeProvider, ProjectElement } from "./projectTree";
 
 export function activate(context: vscode.ExtensionContext) {
   // Path information :
@@ -29,5 +29,9 @@ export function activate(context: vscode.ExtensionContext) {
   const projectTreeProvider = new ProjectTreeProvider(editor_path); 
   vscode.commands.registerCommand("projectTree.clickFile",  (id: number) => projectTreeProvider.clickFile(id));
   vscode.commands.registerCommand("projectTree.clickGroup", (id: number) => projectTreeProvider.clickGroup(id));
-  vscode.window.registerTreeDataProvider('projectTree', projectTreeProvider);
+  
+  //vscode.commands.registerCommand("projectTree.add", (id: number) => projectTreeProvider.add(id));
+  vscode.commands.registerCommand("projectTree.add", (element: ProjectElement) => projectTreeProvider.add(element));
+  
+  vscode.window.registerTreeDataProvider('projectTree', projectTreeProvider);  
 }
