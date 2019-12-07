@@ -209,6 +209,8 @@ export class ProjectTreeProvider implements vscode.TreeDataProvider<ProjectEleme
 
   add(element: ProjectElement): void {
     console.log(`You clicked on Add to location '${element.ptid}'`);
+    
+    // https://github.com/Tyriar/vscode-terminal-here/blob/master/src/extension.ts
     let editor = vscode.window.activeTextEditor;
     if (!editor) { return; }   // No active document
     let document = editor.document;
@@ -216,7 +218,22 @@ export class ProjectTreeProvider implements vscode.TreeDataProvider<ProjectEleme
     let uri = document.uri; 
     if (!uri) { return; }      // Has no filename
     
-    console.log(`filename to add '${uri}'`); 
+    //console.log(`filename to add '${uri}'`, uri); 
+    /*
+      $mid:1
+      fsPath:"/home/andrewsm/OpenSource/vscode-project-tree/README.md"
+      external:"file:///home/andrewsm/OpenSource/vscode-project-tree/README.md"
+      path:"/home/andrewsm/OpenSource/vscode-project-tree/README.md"
+      scheme:"file"
+    */
+    
+    // Need to get a path relative to the parent of '.editor'
+    //   https://nodejs.org/api/path.html#path_path_relative_from_to
+    var path_relative = path.relative( this.vscode_launch_directory, path.dirname(uri.path) );
+    var file_relative = path.join( path_relative, path.basename(uri.path) );
+    var file = (file_relative.length < uri.path.length) ? path.join('.', file_relative) : uri.path;
+    console.log(`File selected : '${uri.path}' ~ '${file_relative}' -> '${file}'`);
+    
   }
 
 
