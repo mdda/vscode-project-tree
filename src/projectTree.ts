@@ -188,8 +188,8 @@ export class ProjectTreeProvider implements vscode.TreeDataProvider<ProjectEleme
     }
   }
 
-  clickGroup(id: number): void {
-    console.log(`You clicked on Group '${id}'`); 
+  clickGroup(element: ProjectElement): void {
+    console.log(`You clicked on Group element '${element.ptid}'`); 
     if(this.move_from_ptid<0) {
       // Not sure why we'd click on a Group label itself
     }
@@ -257,7 +257,7 @@ export class ProjectElement extends vscode.TreeItem {
       this.command = {
         command: "projectTree.clickGroup",
         title: "Click Group",
-        arguments: [this.ptid]
+        arguments: [this]
       };      
     }
   }

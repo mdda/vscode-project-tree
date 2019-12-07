@@ -29,7 +29,7 @@ export function activate(context: vscode.ExtensionContext) {
   const projectTreeProvider = new ProjectTreeProvider(editor_path); 
   //vscode.commands.registerCommand("projectTree.clickFile",  (id: number) => projectTreeProvider.clickFile(id));
   vscode.commands.registerCommand("projectTree.clickFile",  (element: ProjectElement) => projectTreeProvider.clickFile(element));
-  vscode.commands.registerCommand("projectTree.clickGroup", (id: number) => projectTreeProvider.clickGroup(id));
+  vscode.commands.registerCommand("projectTree.clickGroup", (element: ProjectElement) => projectTreeProvider.clickGroup(element));
   
   //vscode.commands.registerCommand("projectTree.add", (id: number) => projectTreeProvider.add(id));
   vscode.commands.registerCommand("projectTree.add", (element: ProjectElement) => projectTreeProvider.add(element));
