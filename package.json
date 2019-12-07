@@ -53,20 +53,16 @@
         },
         "commands": [
             {
-                "command": "projectTree.refresh",
-                "title": "Refresh project tree",
-                "icon": {
-                    "dark": "resources/dark/icon-refresh.svg",
-                    "light": "resources/light/icon-refresh.svg"
-                }
-            },
-            {
                 "command": "projectTree.save_session",
                 "title": "Save Session"
             },
             {
                 "command": "projectTree.save_project",
                 "title": "Save Project"
+            },
+            {
+                "command": "projectTree.add",
+                "title": "Add Here"
             },
             {
                 "command": "projectTree.rename",
@@ -84,19 +80,24 @@
         "menus": {
             "view/item/context": [
                 {
+                    "command": "projectTree.add",
+                    "when": "view == projectTree",
+                    "group": "1_projectTreeHere@1"
+                },
+                {
                     "command": "projectTree.rename",
                     "when": "view == projectTree",
-                    "group": "1_projecttree@1"
+                    "group": "2_projectTree@1"
                 },
                 {
                     "command": "projectTree.move",
                     "when": "view == projectTree",
-                    "group": "1_projectTree@2"
+                    "group": "2_projectTree@2"
                 },
                 {
                     "command": "projectTree.delete",
                     "when": "view == projectTree",
-                    "group": "1_projectTree@3"
+                    "group": "2_projectTree@3"
                 }
             ],
             "view/title": [
@@ -108,10 +109,20 @@
                 {
                     "command": "projectTree.save_project",
                     "when": "view == projectTree",
-                    "group": "1_projectTree@1"
+                    "group": "1_projectTree@2"
                 }
             ]
         },
+        "XXX-commands": [
+            {
+                "command": "projectTree.refresh",
+                "title": "Refresh project tree",
+                "icon": {
+                    "dark": "resources/dark/icon-refresh.svg",
+                    "light": "resources/light/icon-refresh.svg"
+                }
+            }
+        ],
         "XXX-menus": {
             "XXX-view/title": [
                 {
