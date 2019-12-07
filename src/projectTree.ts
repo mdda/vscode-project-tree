@@ -164,8 +164,20 @@ export class ProjectTreeProvider implements vscode.TreeDataProvider<ProjectEleme
     return Promise.resolve(element.children);
   }
   
-  clickFile(id: number): void {
+  clickFile_by_id(id: number): void {
     console.log(`You clicked on File '${id}'`); 
+    if(this.move_from_ptid<0) {
+      // Open up the file in the editor
+      
+    }
+    else { // We're doing a move to command here
+      
+      this.move_from_ptid=-1;  // Finished with mode
+    }
+  }
+
+  clickFile(element: ProjectElement): void {
+    console.log(`You clicked on File element '${element.ptid}'`); 
     if(this.move_from_ptid<0) {
       // Open up the file in the editor
       
@@ -236,7 +248,8 @@ export class ProjectElement extends vscode.TreeItem {
       this.command = {
         command: "projectTree.clickFile",
         title: "Click File",
-        arguments: [this.ptid]
+        //arguments: [this.ptid]
+        arguments: [this]
       };      
     }
     else {
