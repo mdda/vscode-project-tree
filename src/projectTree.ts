@@ -126,9 +126,9 @@ export class ProjectTreeProvider implements vscode.TreeDataProvider<ProjectEleme
     }
   }
 
-  //refresh(): void {
-  //  this._onDidChangeTreeData.fire();
-  //}
+  refresh(): void {
+    this._onDidChangeTreeData.fire();
+  }
   
   findElementInTree(id: number): ProjectElement {
     function findElementInThis(element: ProjectElement) {
@@ -206,18 +206,17 @@ export class ProjectTreeProvider implements vscode.TreeDataProvider<ProjectEleme
       console.log(`  Found the element : Label '{element.label}'`); 
     }
   }
-
-  add(element: ProjectElement): void {
-    console.log(`You clicked on Add to location '${element.ptid}'`);
-    
+  
+  get_active_document_uri() {
     // https://github.com/Tyriar/vscode-terminal-here/blob/master/src/extension.ts
     let editor = vscode.window.activeTextEditor;
-    if (!editor) { return; }   // No active document
+    if (!editor) { return undefined; }   // No active document
     let document = editor.document;
-    if (!document) { return; } // Not a real document
-    let uri = document.uri; 
-    if (!uri) { return; }      // Has no filename
-    
+    if (!document) { return undefined; } // Not a real document
+    return document.uri;
+  }
+
+  get_relative_filename(uri): string {
     //console.log(`filename to add '${uri}'`, uri); 
     /*
       $mid:1
@@ -231,9 +230,49 @@ export class ProjectTreeProvider implements vscode.TreeDataProvider<ProjectEleme
     //   https://nodejs.org/api/path.html#path_path_relative_from_to
     var path_relative = path.relative( this.vscode_launch_directory, path.dirname(uri.path) );
     var file_relative = path.join( path_relative, path.basename(uri.path) );
-    var file = (file_relative.length < uri.path.length) ? path.join('.', file_relative) : uri.path;
-    console.log(`File selected : '${uri.path}' ~ '${file_relative}' -> '${file}'`);
+    var filename = (file_relative.length < uri.path.length) ? path.join('.', file_relative) : uri.path;
+    console.log(`File selected : '${uri.path}' ~ '${file_relative}' -> '${filename}'`);
+
+    return filename;
+  }
+
+  add(element: ProjectElement): void {
+    console.log(`You clicked on Add to location '${element.ptid}'`);
+    var uri = this.get_active_document_uri();
+    if(!uri) { return; }
+    var filename = this.get_relative_filename(uri);
+    if(!filename) { return; }
     
+    if('g'==element.type) { // Add to group
+      var file_element = new ProjectElement(this.tree_id_last++, element,
+                            'f', path.basename(filename),
+                            vscode.TreeItemCollapsibleState.None,
+                            filename);
+      element.children.push( file_element );
+      console.log(`  Add new element at end of .children[]`);
+    }
+    else { // Add after this element (find within parent.children, then put the addition afterwards)
+      var parent = (element.parent) ? element.parent : this.tree_root;
+      var idx_ptid_arr = parent.children.map( (e:ProjectElement,idx:number) => [idx,e.ptid] )
+      //console.log("idx_ptid_arr",  idx_ptid_arr );
+      
+      var after = idx_ptid_arr.filter( idx_ptid => idx_ptid[1]==element.ptid );
+      //console.log("idx_ptid[]",  after );
+      
+      if( after.length==0) {  return; }
+       
+      // We found something to insert this after
+      var file_element = new ProjectElement(this.tree_id_last++, parent,
+                            'f', path.basename(filename),
+                            vscode.TreeItemCollapsibleState.None,
+                            filename);
+      // https://stackoverflow.com/questions/586182/how-to-insert-an-item-into-an-array-at-a-specific-index-javascript
+      parent.children.splice(after[0][0]+1, 0, file_element);
+      console.log(`  Add new element after parent.child at position '${after[0][0]}'`);
+    }
+    
+    // Need to redraw the tree
+    this.refresh(); 
   }
 
 
