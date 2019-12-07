@@ -256,10 +256,10 @@ export class ProjectTreeProvider implements vscode.TreeDataProvider<ProjectEleme
       var idx_ptid_arr = parent.children.map( (e:ProjectElement,idx:number) => [idx,e.ptid] )
       //console.log("idx_ptid_arr",  idx_ptid_arr );
       
-      var after = idx_ptid_arr.filter( idx_ptid => idx_ptid[1]==element.ptid );
-      //console.log("idx_ptid[]",  after );
+      var idx_ptid_found = idx_ptid_arr.filter( idx_ptid => idx_ptid[1]==element.ptid );
+      //console.log("idx_ptid_found[]",  idx_ptid_found );
       
-      if( after.length==0) {  return; }
+      if( idx_ptid_found.length==0) {  return; }
        
       // We found something to insert this after
       var file_element = new ProjectElement(this.tree_id_last++, parent,
@@ -267,8 +267,8 @@ export class ProjectTreeProvider implements vscode.TreeDataProvider<ProjectEleme
                             vscode.TreeItemCollapsibleState.None,
                             filename);
       // https://stackoverflow.com/questions/586182/how-to-insert-an-item-into-an-array-at-a-specific-index-javascript
-      parent.children.splice(after[0][0]+1, 0, file_element);
-      console.log(`  Add new element after parent.child at position '${after[0][0]}'`);
+      parent.children.splice(idx_ptid_found[0][0]+1, 0, file_element);
+      console.log(`  Add new element after parent.child at position '${idx_ptid_found[0][0]}'`);
     }
     
     // Need to redraw the tree
