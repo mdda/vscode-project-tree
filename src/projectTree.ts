@@ -27,7 +27,7 @@ export class ProjectTreeProvider implements vscode.TreeDataProvider<ProjectEleme
   constructor(private vscode_launch_directory: string) {
     console.log("vscode_launch_directory", vscode_launch_directory);
     
-    // unfortutely, this is un-parsed...
+    // unfortunately, this is un-parsed...
     this.test_config = vscode.workspace.getConfiguration('projectTree').get('paths');
     //console.log("this.test_config", this.test_config);
     
@@ -209,7 +209,14 @@ export class ProjectTreeProvider implements vscode.TreeDataProvider<ProjectEleme
 
   add(element: ProjectElement): void {
     console.log(`You clicked on Add to location '${element.ptid}'`);
+    let editor = vscode.window.activeTextEditor;
+    if (!editor) { return; }   // No active document
+    let document = editor.document;
+    if (!document) { return; } // Not a real document
+    let uri = document.uri; 
+    if (!uri) { return; }      // Has no filename
     
+    console.log(`filename to add '${uri}'`); 
   }
 
 
