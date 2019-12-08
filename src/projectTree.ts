@@ -327,6 +327,18 @@ export class ProjectTreeProvider implements vscode.TreeDataProvider<ProjectEleme
     return Promise.resolve();
   }
 
+  async rename(element: ProjectElement) {
+    var name_existing = ('f'==element.type)?element.filename:element.label;
+    var name = await vscode.window.showInputBox({ value: name_existing });  // placeHolder
+    //console.log(`'${confirm}' selected`);
+    if(name) {
+      console.log(`  Rename element from '${name_existing}' to '${name}'`);
+      element.rename(name);
+      this.refresh(); 
+    }
+    return Promise.resolve();
+  }
+
   async delete_element(element: ProjectElement) {
     //var confirm = await vscode.window.showInputBox({ placeHolder: "Type 'YES' to confirm deletion" });
     var confirm = await vscode.window.showQuickPick(["YES - Confirm deletion of this item"], {canPickMany: false});
@@ -363,12 +375,12 @@ export class ProjectElement extends vscode.TreeItem {
     public readonly ptid: number, 
     public readonly parent: ProjectElement,
     public readonly type: string, 
-    public readonly label: string,
+    public label: string,
     
     // https://code.visualstudio.com/api/references/vscode-api#TreeItemCollapsibleState
     public readonly collapsibleState: vscode.TreeItemCollapsibleState,
     
-    public readonly filename?: string
+    public filename?: string
     
     //public readonly command?: vscode.Command
   ) {
@@ -400,6 +412,16 @@ export class ProjectElement extends vscode.TreeItem {
     return `${this.label}`;
   }
 
+  rename(name_new): void {
+    if('f'==this.type) {
+      this.label=path.basename(name_new);
+      this.filename=name_new;
+    }
+    else {
+      this.label=name_new;
+    }
+  }
+  
   //get description(): string {
   //  return this.version;
   //}
