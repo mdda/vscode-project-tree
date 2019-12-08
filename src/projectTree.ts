@@ -114,16 +114,24 @@ export class ProjectTreeProvider implements vscode.TreeDataProvider<ProjectEleme
           
           if( config['.'] ) {
             _load_project_tree_branch('.', this.tree_root)
-            this.tree_id_last = tree_id;
             console.log( this.tree_root );
           }
-          
-          
         }
-        
-        
       }
     }
+    
+    if( this.tree_root.children.length==0 ) {
+      // If nothing was loaded, create a fake entry
+      var filename = './notes.txt';
+      this.tree_root.children.push( 
+        new ProjectElement(tree_id++, this.tree_root,
+                           'f', 'fake-file_notes.txt',
+                           vscode.TreeItemCollapsibleState.None,
+                           filename)
+      );
+    }
+    
+    this.tree_id_last = tree_id;
   }
 
   refresh(): void {
