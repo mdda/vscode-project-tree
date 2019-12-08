@@ -99,6 +99,7 @@
                     "group": "2_projectTree@1"
                 },
                 {
+                    "TODO": "fix tree_root, add status bar midst-move message",
                     "command": "projectTree.move",
                     "when": "view == projectTree",
                     "group": "2_projectTree@2"
