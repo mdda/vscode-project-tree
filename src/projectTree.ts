@@ -22,7 +22,7 @@ export class ProjectTreeProvider implements vscode.TreeDataProvider<ProjectEleme
   private tree_id_last: number = 1;
   // Not actually used as a TreeView element, just as a holder for children
   private tree_root: ProjectElement = undefined;
-  private move_from_ptid: number = -1;
+  private move_from_element: ProjectElement = undefined;
   
   constructor(private vscode_launch_directory: string) {
     console.log("vscode_launch_directory", vscode_launch_directory);
@@ -174,36 +174,39 @@ export class ProjectTreeProvider implements vscode.TreeDataProvider<ProjectEleme
   
   clickFile_by_id(id: number): void {
     console.log(`You clicked on File '${id}'`); 
-    if(this.move_from_ptid<0) {
+    if(this.move_from_element) { // We're completing a move to command here
+      //move_finish(element);
+    }
+    else { 
       // Open up the file in the editor
       
-    }
-    else { // We're doing a move to command here
       
-      this.move_from_ptid=-1;  // Finished with mode
+      
+      
     }
   }
 
   clickFile(element: ProjectElement): void {
     console.log(`You clicked on File element '${element.ptid}'`); 
-    if(this.move_from_ptid<0) {
+    if(this.move_from_element) { // We're completing a move to command here
+      this.move_finish(element);
+    }
+    else { 
       // Open up the file in the editor
       
-    }
-    else { // We're doing a move to command here
       
-      this.move_from_ptid=-1;  // Finished with mode
+      
+      
     }
   }
 
   clickGroup(element: ProjectElement): void {
     console.log(`You clicked on Group element '${element.ptid}'`); 
-    if(this.move_from_ptid<0) {
-      // Not sure why we'd click on a Group label itself
+    if(this.move_from_element) { // We're completing a move to command here
+      this.move_finish(element);
     }
-    else { // We're doing a move to command here
-      
-      this.move_from_ptid=-1;  // Finished with mode
+    else { 
+      // Not sure why we'd click on a Group label itself
     }
   }
 
@@ -339,6 +342,40 @@ export class ProjectTreeProvider implements vscode.TreeDataProvider<ProjectEleme
     return Promise.resolve();
   }
 
+  move_start(element_from: ProjectElement) {
+    this.move_from_element = element_from;
+  }
+  
+  move_finish(element_to: ProjectElement) {
+    var element_from = this.move_from_element;
+    var parent_from = this.get_parent(element_from);
+    var idx_from = this.get_index_within_children(parent_from, element_from.ptid);
+
+    var parent_to = this.get_parent(element_to);
+    var idx_to = this.get_index_within_children(parent_to, element_to.ptid);
+
+    if( idx_from>=0 && idx_to>=0 && element_from.ptid!=element_to.ptid ) { 
+      console.log(`  Executing the move`);
+      
+      if('g'==element_to.type) { // Add to group
+        console.log(`  Move element '${element_from.label}' to end of '${element_to.label}'.children[]`);
+        element_from.parent = element_to;  // Fix up parent
+        element_to.children.push( element_from );
+      }
+      else { // Add after this element (find within parent.children, then put the addition afterwards)
+        console.log(`  Move element '${element_from.label}'  after '${element_to.label}'.child at position '${idx_to}'`);
+        element_from.parent = parent_to;  // Fix up parent
+        parent_to.children.splice(idx_to+1, 0, element_from);
+      }
+      
+      parent_from.children.splice(idx_from, 1);  // remove it from source
+      
+      this.refresh();
+    }
+    this.move_from_element=undefined;  // Finished with mode
+  }
+
+
   async delete_element(element: ProjectElement) {
     //var confirm = await vscode.window.showInputBox({ placeHolder: "Type 'YES' to confirm deletion" });
     var confirm = await vscode.window.showQuickPick(["YES - Confirm deletion of this item"], {canPickMany: false});
@@ -373,7 +410,7 @@ export class ProjectElement extends vscode.TreeItem {
   
   constructor(
     public readonly ptid: number, 
-    public readonly parent: ProjectElement,
+    public parent: ProjectElement,
     public readonly type: string, 
     public label: string,
     
