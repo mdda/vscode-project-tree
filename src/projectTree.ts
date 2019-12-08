@@ -266,6 +266,7 @@ export class ProjectTreeProvider implements vscode.TreeDataProvider<ProjectEleme
     var filename = this.get_relative_filename(uri);
     if(!filename) { return; }
 
+    // avoid 'function' here to allow us to smuggle 'this' inside
     var create_file_element = (where: ProjectElement): ProjectElement => {
       return new ProjectElement(this.tree_id_last++, where,
                                 'f', path.basename(filename),
@@ -291,8 +292,39 @@ export class ProjectTreeProvider implements vscode.TreeDataProvider<ProjectEleme
     this.refresh(); 
   }
 
-  add_group(element: ProjectElement): void {
+  async add_group(element: ProjectElement) {
     console.log(`You clicked on AddGroup to location '${element.ptid}'`);
+
+    // Prompt for group element
+    var group = await vscode.window.showInputBox({ placeHolder: "Name for new Group" });
+    if( !group ) {
+      return Promise.resolve();
+    }
+    
+    var create_group_element = (where: ProjectElement): ProjectElement => {
+      return new ProjectElement(this.tree_id_last++, where,
+                                'g', group,
+                                vscode.TreeItemCollapsibleState.Collapsed);
+    }
+    
+    if('g'==element.type) { // Add to group
+      console.log(`  Add new element at end of .children[]`);
+      element.children.push( create_group_element(element) );
+    }
+    else { // Add after this element (find within parent.children, then put the addition afterwards)
+      var parent = this.get_parent(element);
+      var idx = this.get_index_within_children(parent, element.ptid);
+      if( idx<0 ) { return; }
+       
+      // https://stackoverflow.com/questions/586182/how-to-insert-an-item-into-an-array-at-a-specific-index-javascript
+      console.log(`  Added new element after parent.child at position '${idx}'`);
+      parent.children.splice(idx+1, 0, create_group_element(parent));
+    }
+    
+    // Need to redraw the tree
+    this.refresh(); 
+    
+    return Promise.resolve();
   }
 
   async delete_element(element: ProjectElement) {

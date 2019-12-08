@@ -89,7 +89,6 @@
                     "group": "1_projectTreeHere@1"
                 },
                 {
-                    "TODO": "inputbox for group label",
                     "command": "projectTree.add_group",
                     "when": "view == projectTree",
                     "group": "1_projectTreeHere@2"
