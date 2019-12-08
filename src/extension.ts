@@ -33,6 +33,7 @@ export function activate(context: vscode.ExtensionContext) {
   
   //vscode.commands.registerCommand("projectTree.add", (id: number) => projectTreeProvider.add(id));
   vscode.commands.registerCommand("projectTree.add", (element: ProjectElement) => projectTreeProvider.add(element));
+  vscode.commands.registerCommand("projectTree.delete", (element: ProjectElement) => projectTreeProvider.delete_element(element));
   
   vscode.window.registerTreeDataProvider('projectTree', projectTreeProvider);  
 }

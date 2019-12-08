@@ -62,7 +62,11 @@
             },
             {
                 "command": "projectTree.add",
-                "title": "Add Here"
+                "title": "Add Editor File"
+            },
+            {
+                "command": "projectTree.add_group",
+                "title": "Add New Group"
             },
             {
                 "command": "projectTree.rename",
@@ -83,6 +87,11 @@
                     "command": "projectTree.add",
                     "when": "view == projectTree",
                     "group": "1_projectTreeHere@1"
+                },
+                {
+                    "command": "projectTree.add_group",
+                    "when": "view == projectTree",
+                    "group": "1_projectTreeHere@2"
                 },
                 {
                     "command": "projectTree.rename",

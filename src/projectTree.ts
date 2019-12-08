@@ -243,6 +243,21 @@ export class ProjectTreeProvider implements vscode.TreeDataProvider<ProjectEleme
 
     return filename;
   }
+  
+  get_parent(element: ProjectElement): ProjectElement {
+    return (element.parent) ? element.parent : this.tree_root;
+  }
+  
+  get_index_within_children(parent: ProjectElement, ptid: number): number {
+    var idx_ptid_arr = parent.children.map( (e:ProjectElement,idx:number) => [idx,e.ptid] );
+    //console.log("idx_ptid_arr",  idx_ptid_arr );
+    
+    var idx_ptid_found = idx_ptid_arr.filter( idx_ptid => idx_ptid[1]==ptid );
+    //console.log("idx_ptid_found[]",  idx_ptid_found );
+    
+    if( idx_ptid_found.length==0) {  return -1; }
+    return idx_ptid_found[0][0];  // This is the index of the found child
+  }
 
   add(element: ProjectElement): void {
     console.log(`You clicked on Add to location '${element.ptid}'`);
@@ -260,14 +275,17 @@ export class ProjectTreeProvider implements vscode.TreeDataProvider<ProjectEleme
       console.log(`  Add new element at end of .children[]`);
     }
     else { // Add after this element (find within parent.children, then put the addition afterwards)
-      var parent = (element.parent) ? element.parent : this.tree_root;
-      var idx_ptid_arr = parent.children.map( (e:ProjectElement,idx:number) => [idx,e.ptid] )
+      var parent = this.get_parent(element);
+      var idx = this.get_index_within_children(parent, element.ptid);
+      if( idx<0 ) { return; }
+      
+      //var idx_ptid_arr = parent.children.map( (e:ProjectElement,idx:number) => [idx,e.ptid] )
       //console.log("idx_ptid_arr",  idx_ptid_arr );
       
-      var idx_ptid_found = idx_ptid_arr.filter( idx_ptid => idx_ptid[1]==element.ptid );
+      //var idx_ptid_found = idx_ptid_arr.filter( idx_ptid => idx_ptid[1]==element.ptid );
       //console.log("idx_ptid_found[]",  idx_ptid_found );
       
-      if( idx_ptid_found.length==0) {  return; }
+      //if( idx_ptid_found.length==0) {  return; }
        
       // We found something to insert this after
       var file_element = new ProjectElement(this.tree_id_last++, parent,
@@ -275,12 +293,29 @@ export class ProjectTreeProvider implements vscode.TreeDataProvider<ProjectEleme
                             vscode.TreeItemCollapsibleState.None,
                             filename);
       // https://stackoverflow.com/questions/586182/how-to-insert-an-item-into-an-array-at-a-specific-index-javascript
-      parent.children.splice(idx_ptid_found[0][0]+1, 0, file_element);
-      console.log(`  Add new element after parent.child at position '${idx_ptid_found[0][0]}'`);
+      //parent.children.splice(idx_ptid_found[0][0]+1, 0, file_element);
+      parent.children.splice(idx+1, 0, file_element);
+      console.log(`  Added new element after parent.child at position '${idx}'`);
     }
     
     // Need to redraw the tree
     this.refresh(); 
+  }
+
+  async delete_element(element: ProjectElement) {
+    //var confirm = await vscode.window.showInputBox({ placeHolder: "Type 'YES' to confirm deletion" });
+    var confirm = await vscode.window.showQuickPick(["YES - Confirm deletion of this item"], {canPickMany: false});
+    //console.log(`'${confirm}' selected`);
+    if(confirm.match(/^YES/)) {
+      console.log(`  Delete element...`);
+      var parent = this.get_parent(element);
+      var idx = this.get_index_within_children(parent, element.ptid);
+      if( idx>=0 ) { 
+        parent.children.splice(idx, 1);
+        this.refresh(); 
+      }
+    }
+    return Promise.resolve();
   }
 
 
