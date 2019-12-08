@@ -101,7 +101,7 @@
                     "group": "2_projectTree@1"
                 },
                 {
-                    "TODO": "change cursor?",
+                    "TODO": "change cursor(?) and set mode for next click",
                     "command": "projectTree.move",
                     "when": "view == projectTree",
                     "group": "2_projectTree@2"

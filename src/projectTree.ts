@@ -265,32 +265,34 @@ export class ProjectTreeProvider implements vscode.TreeDataProvider<ProjectEleme
     if(!uri) { return; }
     var filename = this.get_relative_filename(uri);
     if(!filename) { return; }
+
+    var create_file_element = (where: ProjectElement): ProjectElement => {
+      return new ProjectElement(this.tree_id_last++, where,
+                                'f', path.basename(filename),
+                                vscode.TreeItemCollapsibleState.None,
+                                filename);
+    }
     
     if('g'==element.type) { // Add to group
-      var file_element = new ProjectElement(this.tree_id_last++, element,
-                            'f', path.basename(filename),
-                            vscode.TreeItemCollapsibleState.None,
-                            filename);
-      element.children.push( file_element );
       console.log(`  Add new element at end of .children[]`);
+      element.children.push( create_file_element(element) );
     }
     else { // Add after this element (find within parent.children, then put the addition afterwards)
       var parent = this.get_parent(element);
       var idx = this.get_index_within_children(parent, element.ptid);
       if( idx<0 ) { return; }
        
-      // We found something to insert this after
-      var file_element = new ProjectElement(this.tree_id_last++, parent,
-                            'f', path.basename(filename),
-                            vscode.TreeItemCollapsibleState.None,
-                            filename);
       // https://stackoverflow.com/questions/586182/how-to-insert-an-item-into-an-array-at-a-specific-index-javascript
-      parent.children.splice(idx+1, 0, file_element);
       console.log(`  Added new element after parent.child at position '${idx}'`);
+      parent.children.splice(idx+1, 0, create_file_element(parent));
     }
     
     // Need to redraw the tree
     this.refresh(); 
+  }
+
+  add_group(element: ProjectElement): void {
+    console.log(`You clicked on AddGroup to location '${element.ptid}'`);
   }
 
   async delete_element(element: ProjectElement) {
