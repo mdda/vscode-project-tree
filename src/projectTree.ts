@@ -181,10 +181,7 @@ export class ProjectTreeProvider implements vscode.TreeDataProvider<ProjectEleme
     }
     else { 
       // Open up the file in the editor
-      
-      
-      
-      
+      //.. todo - maybe later
     }
   }
 
@@ -195,9 +192,9 @@ export class ProjectTreeProvider implements vscode.TreeDataProvider<ProjectEleme
     }
     else { 
       // Open up the file in the editor
-      
-      
-      
+      let uri = this.expand_relative_filename(element.filename);
+      vscode.workspace.openTextDocument(uri)
+        .then(doc => vscode.window.showTextDocument(doc));
       
     }
   }
@@ -247,6 +244,11 @@ export class ProjectTreeProvider implements vscode.TreeDataProvider<ProjectEleme
     console.log(`File selected : '${uri.path}' ~ '${file_relative}' -> '${filename}'`);
 
     return filename;
+  }
+  
+  expand_relative_filename(filename): vscode.Uri {
+    var expanded = filename.startsWith('/')? filename : path.join( this.vscode_launch_directory, filename );
+    return vscode.Uri.file(expanded);
   }
   
   get_parent(element: ProjectElement): ProjectElement {

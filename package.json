@@ -111,14 +111,13 @@
             ],
             "view/title": [
                 {
-                    "TODO-first": "Open editor file in editor",
-                    "TODO": "confirm directory creation",
+                    "TODO": "if necessary, confirm directory creation",
                     "command": "projectTree.save_session",
                     "when": "view == projectTree",
                     "group": "1_projectTree@1"
                 },
                 {
-                    "TODO": "confirm directory creation",
+                    "TODO": "if necessary, confirm directory creation",
                     "command": "projectTree.save_project",
                     "when": "view == projectTree",
                     "group": "1_projectTree@2"
