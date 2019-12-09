@@ -20,12 +20,12 @@ export class ProjectTreeProvider implements vscode.TreeDataProvider<ProjectEleme
   private test_config: string = "";
   private config_dir: string = undefined;
   
-  private tree_path: string = undefined;
-  //private tree_root: ProjectElement[] = [];
+  private project_path: string = undefined;
+  private session_path: string = undefined;
   
-  private tree_id_last: number = 1;
   // Not actually used as a TreeView element, just as a holder for children
   private tree_root: ProjectElement = undefined;
+  private tree_id_last: number = 1;
   
   private move_from_element: ProjectElement = undefined;
   private status_bar_item: vscode.StatusBarItem = undefined;
@@ -49,79 +49,14 @@ export class ProjectTreeProvider implements vscode.TreeDataProvider<ProjectEleme
       if(valid_dirs.length>0) {
         this.config_dir = valid_dirs[0];
         
-        this.tree_path = path.join(this.config_dir, config_tree_layout_file);
-        if( this.pathExists(this.tree_path) ) {
-          // Read in the config...  :: https://github.com/npm/ini
-          var config_mangled = ini.parse(fs.readFileSync(this.tree_path, 'utf-8'))
-          
-          // Strangely, the initial '.' could be stripped off the section names : Add back
-          var config = Object.keys(config_mangled['']).reduce( (acc, a) => {
-            if(a.substr(0,1)=='.') {
-              acc[ a ] = config_mangled[''][a];
-            }
-            else {
-              acc[ '.'+a ] = config_mangled[''][a];
-            }
-            return acc;
-          }, {});
-          //console.log("config", config);
-          
-          var _load_project_tree_branch = (section, parent) => {
-            console.log("_load_project_tree_branch", section);
-            
-            const key_matcher = /(\d+)-?(\S*)/;
-            var section_gather={};
-            
-            Object.keys( config[section] ).forEach( k => {
-              var v = config[section][k];
-              var group = k.match( key_matcher );
-              //console.log(k, v, group);
-              if(group) {
-                var order = group[1];
-                if(! section_gather[order]) {
-                  section_gather[order]={};
-                }
-                section_gather[order][group[2] || ''] = v;
-              }
-            });
-            //console.log("section_gather", section_gather);
+        this.project_path = path.join(this.config_dir, config_tree_layout_file);
+        if( this.pathExists(this.project_path) ) {
+          this.project_load( this.project_path );
+        }
         
-            // Now, in numerical order...
-            var ordered = Object.keys(section_gather).sort((n1,n2) => Number(n1) - Number(n2));
-            
-            ordered.forEach( k => {
-              var vd=section_gather[k];
-              if( vd[''] ) {
-                // This is a file entry
-                var filename = vd[''];
-                var file_element = new ProjectElement(this.tree_id_last++, parent,
-                                      'f', path.basename(filename),
-                                      vscode.TreeItemCollapsibleState.None,
-                                      filename);
-                parent.children.push( file_element );
-              }
-              else if( vd['group'] ) {
-                // This is a Group entry
-                var group = vd['group'];
-                
-                // Add the group to the tree, and recursively go after that section...
-                var group_element = new ProjectElement(this.tree_id_last++, parent,
-                                      'g', group,
-                                      vscode.TreeItemCollapsibleState.Collapsed);
-                parent.children.push( group_element );
-                
-                // Descend with parent = currently-being-added-group
-                _load_project_tree_branch(section+'/'+group, group_element )  // Add to this group's children array
-              }
-              
-            });
-            return; // end of _load_project_tree_branch
-          }
-          
-          if( config['.'] ) {
-            _load_project_tree_branch('.', this.tree_root)
-            console.log( this.tree_root );
-          }
+        this.session_path = path.join(this.config_dir, config_session_file);
+        if( this.pathExists(this.session_path) ) {
+          this.session_load( this.session_path );
         }
       }
     }
@@ -425,15 +360,96 @@ export class ProjectTreeProvider implements vscode.TreeDataProvider<ProjectEleme
     return Promise.resolve();
   }
 
+  project_load( project_ini_file: string ): void {
+    // Read in the config...  :: https://github.com/npm/ini
+    var config_mangled = ini.parse(fs.readFileSync(project_ini_file, 'utf-8'))
+    
+    // Strangely, the initial '.' could be stripped off the section names : Add back
+    var config = Object.keys(config_mangled['']).reduce( (acc, a) => {
+      if(a.substr(0,1)=='.') {
+        acc[ a ] = config_mangled[''][a];
+      }
+      else {
+        acc[ '.'+a ] = config_mangled[''][a];
+      }
+      return acc;
+    }, {});
+    //console.log("config", config);
+    
+    var _load_project_tree_branch = (section, parent) => {
+      console.log("_load_project_tree_branch", section);
+      
+      const key_matcher = /(\d+)-?(\S*)/;
+      var section_gather={};
+      
+      Object.keys( config[section] ).forEach( k => {
+        var v = config[section][k];
+        var group = k.match( key_matcher );
+        //console.log(k, v, group);
+        if(group) {
+          var order = group[1];
+          if(! section_gather[order]) {
+            section_gather[order]={};
+          }
+          section_gather[order][group[2] || ''] = v;
+        }
+      });
+      //console.log("section_gather", section_gather);
+  
+      // Now, in numerical order...
+      var ordered = Object.keys(section_gather).sort((n1,n2) => Number(n1) - Number(n2));
+      
+      ordered.forEach( k => {
+        var vd=section_gather[k];
+        if( vd[''] ) {
+          // This is a file entry
+          var filename = vd[''];
+          var file_element = new ProjectElement(this.tree_id_last++, parent,
+                                'f', path.basename(filename),
+                                vscode.TreeItemCollapsibleState.None,
+                                filename);
+          parent.children.push( file_element );
+        }
+        else if( vd['group'] ) {
+          // This is a Group entry
+          var group = vd['group'];
+          
+          // Add the group to the tree, and recursively go after that section...
+          var group_element = new ProjectElement(this.tree_id_last++, parent,
+                                'g', group,
+                                vscode.TreeItemCollapsibleState.Collapsed);
+          parent.children.push( group_element );
+          
+          // Descend with parent = currently-being-added-group
+          _load_project_tree_branch(section+'/'+group, group_element )  // Add to this group's children array
+        }
+        
+      });
+      return; // end of _load_project_tree_branch
+    }
+    
+    if( config['.'] ) {
+      _load_project_tree_branch('.', this.tree_root)
+      console.log( this.tree_root );
+    }
+  }
+
+  session_load( session_ini_file: string ): void {
+    var config_mangled = ini.parse(fs.readFileSync(session_ini_file, 'utf-8'));
+    console.log("TODO! session_load()");
+ 
+  }
+
+  
   async get_valid_save_path(prompt: string) {
     var valid_dirs = config_dir_choices.map( dir => path.join(this.vscode_launch_directory, dir)) .filter( dir => this.pathExists(dir) );
     
     if( valid_dirs.length==0 ) {
-      var tree_path = await vscode.window.showInputBox({ prompt:prompt, value:config_dir_choices[config_dir_choice_default] });
-      if(!tree_path) {
+      var save_path = await vscode.window.showInputBox({ prompt:prompt, value:config_dir_choices[config_dir_choice_default] });
+      if(!save_path) {
         return Promise.resolve(); // abort
       }
-      var create_dir = path.join( this.vscode_launch_directory, tree_path );
+      var create_dir = path.join( this.vscode_launch_directory, save_path );
       console.log(`  Create directory '${create_dir}'`);
       await this.mkdir( create_dir );
       valid_dirs.push( create_dir );
@@ -441,15 +457,25 @@ export class ProjectTreeProvider implements vscode.TreeDataProvider<ProjectEleme
     return Promise.resolve(valid_dirs[0]);
   }
 
-  async session_save() {
-    var save_dir = await this.get_valid_save_path("Session save path :");
+  async project_save() {
+    var save_dir = await this.get_valid_save_path("Project save path :");
     if(save_dir) {
-      console.log(`  Saving session to '${save_dir}'`);
-      // ...  config_session_file
+      console.log(`  Saving project to '${save_dir}'`);
+      // ...  path.join(save_dir, config_tree_layout_file)
+      console.log("TODO! project_save()");
     }
     return Promise.resolve();
   }
 
+  async session_save() {
+    var save_dir = await this.get_valid_save_path("Session save path :");
+    if(save_dir) {
+      console.log(`  Saving session to '${save_dir}'`);
+      // ...  path.join(save_dir, config_session_file)
+      console.log("TODO! session_save()");
+    }
+    return Promise.resolve();
+  }
 
   private pathExists(p: string): boolean {
     try {

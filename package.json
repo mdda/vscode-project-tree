@@ -84,13 +84,14 @@
         "menus": {
             "view/title": [
                 {
-                    "TODO": "if necessary, confirm directory creation",
+                    "TODO": "implement this",
+                    "TODO-after": "implement session_load() too",
                     "command": "projectTree.session_save",
                     "when": "view == projectTree",
                     "group": "1_projectTree@1"
                 },
                 {
-                    "TODO": "if necessary, confirm directory creation",
+                    "TODO": "implement this",
                     "command": "projectTree.project_save",
                     "when": "view == projectTree",
                     "group": "1_projectTree@2"
