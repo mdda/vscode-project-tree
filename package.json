@@ -99,7 +99,6 @@
                     "group": "2_projectTree@1"
                 },
                 {
-                    "TODO": "Add status bar midst-move message",
                     "command": "projectTree.move",
                     "when": "view == projectTree",
                     "group": "2_projectTree@2"
@@ -112,12 +111,14 @@
             ],
             "view/title": [
                 {
+                    "TODO-first": "Open editor file in editor",
                     "TODO": "confirm directory creation",
                     "command": "projectTree.save_session",
                     "when": "view == projectTree",
                     "group": "1_projectTree@1"
                 },
                 {
+                    "TODO": "confirm directory creation",
                     "command": "projectTree.save_project",
                     "when": "view == projectTree",
                     "group": "1_projectTree@2"
