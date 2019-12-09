@@ -75,4 +75,6 @@ TestView appears in Explorer view - but doesn't show anything when opened...
 This seems to explain it well : 
 https://medium.com/@sanaajani/creating-your-first-vs-code-extension-8dbdef2d6ad9
 
+In vscode terminal window, to execute the watch script defined in package.json:scripts, do :
+npm run watch 
 

@@ -360,7 +360,7 @@ export class ProjectTreeProvider implements vscode.TreeDataProvider<ProjectEleme
       if('g'==element_to.type) { // Add to group
         console.log(`  Move element '${element_from.label}' to end of '${element_to.label}'.children[]`);
         element_from.parent = element_to;  // Fix up parent
-        element_to.children.push( element_from );
+        element_to.children.push( element_from ); 
       }
       else { // Add after this element (find within parent.children, then put the addition afterwards)
         console.log(`  Move element '${element_from.label}'  after '${element_to.label}'.child at position '${idx_to}'`);
@@ -463,7 +463,7 @@ export class ProjectElement extends vscode.TreeItem {
   //  return this.version;
   //}
 
-  iconPath = {
+  XXXiconPath = {
     light: path.join(__filename, '..', '..', 'resources', 'light', 'dependency.svg'),
     dark: path.join(__filename, '..', '..', 'resources', 'dark', 'dependency.svg')
   };
