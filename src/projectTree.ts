@@ -22,7 +22,9 @@ export class ProjectTreeProvider implements vscode.TreeDataProvider<ProjectEleme
   private tree_id_last: number = 1;
   // Not actually used as a TreeView element, just as a holder for children
   private tree_root: ProjectElement = undefined;
+  
   private move_from_element: ProjectElement = undefined;
+  private status_bar_item: vscode.StatusBarItem = undefined;
   
   constructor(private vscode_launch_directory: string) {
     console.log("vscode_launch_directory", vscode_launch_directory);
@@ -189,7 +191,7 @@ export class ProjectTreeProvider implements vscode.TreeDataProvider<ProjectEleme
   clickFile(element: ProjectElement): void {
     console.log(`You clicked on File element '${element.ptid}'`); 
     if(this.move_from_element) { // We're completing a move to command here
-      this.move_finish(element);
+      this.move_end(element);
     }
     else { 
       // Open up the file in the editor
@@ -203,7 +205,7 @@ export class ProjectTreeProvider implements vscode.TreeDataProvider<ProjectEleme
   clickGroup(element: ProjectElement): void {
     console.log(`You clicked on Group element '${element.ptid}'`); 
     if(this.move_from_element) { // We're completing a move to command here
-      this.move_finish(element);
+      this.move_end(element);
     }
     else { 
       // Not sure why we'd click on a Group label itself
@@ -263,7 +265,9 @@ export class ProjectTreeProvider implements vscode.TreeDataProvider<ProjectEleme
   }
 
   add(element: ProjectElement): void {
+    this.move_cleanup();
     console.log(`You clicked on Add to location '${element.ptid}'`);
+    
     var uri = this.get_active_document_uri();
     if(!uri) { return; }
     var filename = this.get_relative_filename(uri);
@@ -296,6 +300,7 @@ export class ProjectTreeProvider implements vscode.TreeDataProvider<ProjectEleme
   }
 
   async add_group(element: ProjectElement) {
+    this.move_cleanup();
     console.log(`You clicked on AddGroup to location '${element.ptid}'`);
 
     // Prompt for group element
@@ -331,6 +336,7 @@ export class ProjectTreeProvider implements vscode.TreeDataProvider<ProjectEleme
   }
 
   async rename(element: ProjectElement) {
+    this.move_cleanup();
     var name_existing = ('f'==element.type)?element.filename:element.label;
     var name = await vscode.window.showInputBox({ value: name_existing });  // placeHolder
     //console.log(`'${confirm}' selected`);
@@ -345,9 +351,16 @@ export class ProjectTreeProvider implements vscode.TreeDataProvider<ProjectEleme
   move_start(element_from: ProjectElement) {
     console.log(`Start a move operation at ${element_from.label}.ptid='${element_from.ptid}'`);
     this.move_from_element = element_from;
+    
+    // https://github.com/microsoft/vscode-extension-samples/blob/master/statusbar-sample/src/extension.ts
+    this.status_bar_item = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Left, 100);
+    this.status_bar_item.text = `Select Move Destination`;
+    this.status_bar_item.color = '#FFFF00';
+    //this.status_bar_item.color = new vscode.ThemeColor('statusBarItem.prominentForeground');
+    this.status_bar_item.show();
   }
   
-  move_finish(element_to: ProjectElement) {
+  move_end(element_to: ProjectElement) {
     var element_from = this.move_from_element;
     var parent_from = this.get_parent(element_from);
     var idx_from = this.get_index_within_children(parent_from, element_from.ptid);
@@ -379,11 +392,19 @@ export class ProjectTreeProvider implements vscode.TreeDataProvider<ProjectEleme
       
       this.refresh();
     }
-    this.move_from_element=undefined;  // Finished with mode
+    
+    this.move_cleanup();
   }
 
+  move_cleanup() {
+    this.move_from_element=undefined;  // Finished with mode
+    if(this.status_bar_item) {
+      this.status_bar_item.hide();
+    }
+  }
 
   async delete_element(element: ProjectElement) {
+    this.move_cleanup();
     //var confirm = await vscode.window.showInputBox({ placeHolder: "Type 'YES' to confirm deletion" });
     var confirm = await vscode.window.showQuickPick(["YES - Confirm deletion of this item"], {canPickMany: false});
     //console.log(`'${confirm}' selected`);
