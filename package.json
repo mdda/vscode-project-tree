@@ -53,11 +53,11 @@
         },
         "commands": [
             {
-                "command": "projectTree.save_session",
+                "command": "projectTree.session_save",
                 "title": "Save Session"
             },
             {
-                "command": "projectTree.save_project",
+                "command": "projectTree.project_save",
                 "title": "Save Project"
             },
             {
@@ -82,6 +82,20 @@
             }
         ],
         "menus": {
+            "view/title": [
+                {
+                    "TODO": "if necessary, confirm directory creation",
+                    "command": "projectTree.session_save",
+                    "when": "view == projectTree",
+                    "group": "1_projectTree@1"
+                },
+                {
+                    "TODO": "if necessary, confirm directory creation",
+                    "command": "projectTree.project_save",
+                    "when": "view == projectTree",
+                    "group": "1_projectTree@2"
+                }
+            ],
             "view/item/context": [
                 {
                     "command": "projectTree.add",
@@ -107,20 +121,6 @@
                     "command": "projectTree.delete",
                     "when": "view == projectTree",
                     "group": "2_projectTree@3"
-                }
-            ],
-            "view/title": [
-                {
-                    "TODO": "if necessary, confirm directory creation",
-                    "command": "projectTree.save_session",
-                    "when": "view == projectTree",
-                    "group": "1_projectTree@1"
-                },
-                {
-                    "TODO": "if necessary, confirm directory creation",
-                    "command": "projectTree.save_project",
-                    "when": "view == projectTree",
-                    "group": "1_projectTree@2"
                 }
             ]
         },

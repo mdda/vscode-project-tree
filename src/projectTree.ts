@@ -4,8 +4,12 @@ import * as path from 'path';
 
 import * as ini from 'ini';
 
+import * as mkdirp from 'mkdirp';
 
-const config_dir_choices = ['./.editor', './.geany', ];
+
+const config_dir_choices = ['./.editor', './.geaXny', ];
+const config_dir_choice_default=0;
+
 const config_tree_layout_file='project-tree-layout.ini', config_session_file='session.ini';
 
 
@@ -33,8 +37,8 @@ export class ProjectTreeProvider implements vscode.TreeDataProvider<ProjectEleme
     this.test_config = vscode.workspace.getConfiguration('projectTree').get('paths');
     //console.log("this.test_config", this.test_config);
     
-    var tree_id=this.tree_id_last;
-    this.tree_root = new ProjectElement(tree_id++, undefined, // parent=undefined
+    //var tree_id=this.tree_id_last;
+    this.tree_root = new ProjectElement(this.tree_id_last++, undefined, // parent=undefined
                                          'g', '', // empty group name for tree root
                                          vscode.TreeItemCollapsibleState.Expanded); 
     
@@ -62,7 +66,7 @@ export class ProjectTreeProvider implements vscode.TreeDataProvider<ProjectEleme
           }, {});
           //console.log("config", config);
           
-          function _load_project_tree_branch(section, parent) {
+          var _load_project_tree_branch = (section, parent) => {
             console.log("_load_project_tree_branch", section);
             
             const key_matcher = /(\d+)-?(\S*)/;
@@ -90,7 +94,7 @@ export class ProjectTreeProvider implements vscode.TreeDataProvider<ProjectEleme
               if( vd[''] ) {
                 // This is a file entry
                 var filename = vd[''];
-                var file_element = new ProjectElement(tree_id++, parent,
+                var file_element = new ProjectElement(this.tree_id_last++, parent,
                                       'f', path.basename(filename),
                                       vscode.TreeItemCollapsibleState.None,
                                       filename);
@@ -101,7 +105,7 @@ export class ProjectTreeProvider implements vscode.TreeDataProvider<ProjectEleme
                 var group = vd['group'];
                 
                 // Add the group to the tree, and recursively go after that section...
-                var group_element = new ProjectElement(tree_id++, parent,
+                var group_element = new ProjectElement(this.tree_id_last++, parent,
                                       'g', group,
                                       vscode.TreeItemCollapsibleState.Collapsed);
                 parent.children.push( group_element );
@@ -126,14 +130,13 @@ export class ProjectTreeProvider implements vscode.TreeDataProvider<ProjectEleme
       // If nothing was loaded, create a fake entry
       var filename = './notes.txt';
       this.tree_root.children.push( 
-        new ProjectElement(tree_id++, this.tree_root,
+        new ProjectElement(this.tree_id_last++, this.tree_root,
                            'f', 'fake-file_notes.txt',
                            vscode.TreeItemCollapsibleState.None,
                            filename)
       );
     }
     
-    this.tree_id_last = tree_id;
   }
 
   refresh(): void {
@@ -163,10 +166,10 @@ export class ProjectTreeProvider implements vscode.TreeDataProvider<ProjectEleme
 
   getChildren(element?: ProjectElement): Thenable<ProjectElement[]> {
     console.log("Requested leaf data");
-    if (!this.config_dir) {
-      vscode.window.showInformationMessage('No project tree yet');
-      return Promise.resolve([]);
-    }
+    //if(!this.config_dir) {
+    //  vscode.window.showInformationMessage('No project tree yet');
+    //  return Promise.resolve([]);
+    //}
     if(!element) {
       console.log("Requested root of tree");
       element=this.tree_root;
@@ -422,6 +425,31 @@ export class ProjectTreeProvider implements vscode.TreeDataProvider<ProjectEleme
     return Promise.resolve();
   }
 
+  async get_valid_save_path(prompt: string) {
+    var valid_dirs = config_dir_choices.map( dir => path.join(this.vscode_launch_directory, dir)) .filter( dir => this.pathExists(dir) );
+    
+    if( valid_dirs.length==0 ) {
+      var tree_path = await vscode.window.showInputBox({ prompt:prompt, value:config_dir_choices[config_dir_choice_default] });
+      if(!tree_path) {
+        return Promise.resolve(); // abort
+      }
+      var create_dir = path.join( this.vscode_launch_directory, tree_path );
+      console.log(`  Create directory '${create_dir}'`);
+      await this.mkdir( create_dir );
+      valid_dirs.push( create_dir );
+    }
+    return Promise.resolve(valid_dirs[0]);
+  }
+
+  async session_save() {
+    var save_dir = await this.get_valid_save_path("Session save path :");
+    if(save_dir) {
+      console.log(`  Saving session to '${save_dir}'`);
+      // ...  config_session_file
+    }
+    return Promise.resolve();
+  }
+
 
   private pathExists(p: string): boolean {
     try {
@@ -433,6 +461,15 @@ export class ProjectTreeProvider implements vscode.TreeDataProvider<ProjectEleme
 
     return true;
   }
+  
+  private mkdir(path: string): Promise<void> {
+    return new Promise<void>( (resolve, reject) => {
+        mkdirp(path, error => {
+            if(error) { return reject(error); }
+            return resolve();
+          });
+      });
+  }  
 }
 
 export class ProjectElement extends vscode.TreeItem {
