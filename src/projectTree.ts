@@ -343,6 +343,7 @@ export class ProjectTreeProvider implements vscode.TreeDataProvider<ProjectEleme
   }
 
   move_start(element_from: ProjectElement) {
+    console.log(`Start a move operation at ${element_from.label}.ptid='${element_from.ptid}'`);
     this.move_from_element = element_from;
   }
   
@@ -350,25 +351,31 @@ export class ProjectTreeProvider implements vscode.TreeDataProvider<ProjectEleme
     var element_from = this.move_from_element;
     var parent_from = this.get_parent(element_from);
     var idx_from = this.get_index_within_children(parent_from, element_from.ptid);
-
+    
     var parent_to = this.get_parent(element_to);
-    var idx_to = this.get_index_within_children(parent_to, element_to.ptid);
+    var idx_to_check = this.get_index_within_children(parent_to, element_to.ptid);
+    
+    console.log(`Potential move ${idx_from} -> ${idx_to_check} (${element_from.ptid} -> ${element_to.ptid})`);
+    if( idx_from>=0 && idx_to_check>=0 && element_from.ptid!=element_to.ptid ) {
+      parent_from.children.splice(idx_from, 1);  // remove the element from source
 
-    if( idx_from>=0 && idx_to>=0 && element_from.ptid!=element_to.ptid ) { 
-      console.log(`  Executing the move`);
-      
-      if('g'==element_to.type) { // Add to group
-        console.log(`  Move element '${element_from.label}' to end of '${element_to.label}'.children[]`);
-        element_from.parent = element_to;  // Fix up parent
-        element_to.children.push( element_from ); 
+      // This may have changed because of the removal above...
+      var idx_to = this.get_index_within_children(parent_to, element_to.ptid);
+
+      if( idx_to>=0 ) { 
+        console.log(`  Executing the move`);
+        
+        if('g'==element_to.type) { // Add to group
+          console.log(`  Move element '${element_from.label}' to end of '${element_to.label}'.children[]`);
+          element_from.parent = element_to;  // Fix up parent
+          element_to.children.push( element_from ); 
+        }
+        else { // Add after this element (find within parent.children, then put the addition afterwards)
+          console.log(`  Move element '${element_from.label}'  after '${element_to.label}'.child at position '${idx_to}'`);
+          element_from.parent = parent_to;  // Fix up parent
+          parent_to.children.splice(idx_to+1, 0, element_from);
+        }
       }
-      else { // Add after this element (find within parent.children, then put the addition afterwards)
-        console.log(`  Move element '${element_from.label}'  after '${element_to.label}'.child at position '${idx_to}'`);
-        element_from.parent = parent_to;  // Fix up parent
-        parent_to.children.splice(idx_to+1, 0, element_from);
-      }
-      
-      parent_from.children.splice(idx_from, 1);  // remove it from source
       
       this.refresh();
     }
