@@ -7,7 +7,7 @@ import * as ini from 'ini';
 import * as mkdirp from 'mkdirp';
 
 
-const config_dir_choices = ['./.editor', './.geaXny', ];
+const config_dir_choices = ['./.editor', './.geany', ];
 const config_dir_choice_default=0;
 
 const config_tree_layout_file='project-tree-layout.ini', config_session_file='session.ini';
@@ -471,8 +471,22 @@ export class ProjectTreeProvider implements vscode.TreeDataProvider<ProjectEleme
     var save_dir = await this.get_valid_save_path("Session save path :");
     if(save_dir) {
       console.log(`  Saving session to '${save_dir}'`);
-      // ...  path.join(save_dir, config_session_file)
-      console.log("TODO! session_save()");
+      
+      var open_files=[];
+      
+      // Hmm : This may not be so easy...
+      //   https://github.com/microsoft/vscode/issues/15178
+      //   https://github.com/microsoft/vscode/blob/master/src/vs/workbench/contrib/files/browser/views/openEditorsView.ts#L329
+      //   https://marketplace.visualstudio.com/items?itemName=eamodio.restore-editors
+      //     https://github.com/eamodio/vscode-restore-editors/blob/01efb6710da5e6ae55421dcbbb51edca7904c4a6/src/constants.ts
+      
+      // https://github.com/npm/ini
+      var ini_txt = ini.stringify(open_files, { section: 'open-files' })
+      console.log(ini_txt);
+      
+      //fs.writeFileSync(path.join(save_dir, config_session_file), )
+      
+      
     }
     return Promise.resolve();
   }
