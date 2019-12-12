@@ -130,10 +130,16 @@ export class ProjectTreeProvider implements vscode.TreeDataProvider<ProjectEleme
     }
     else { 
       // Open up the file in the editor
-      let uri = this.expand_relative_filename(element.filename);
-      vscode.workspace.openTextDocument(uri)
-        .then(doc => vscode.window.showTextDocument(doc));
       
+      let uri = this.expand_relative_filename(element.filename);
+      
+      //  Put this in a new tab
+      //    https://code.visualstudio.com/api/references/vscode-api#TextDocumentShowOptions
+      vscode.workspace.openTextDocument(uri)
+        .then(doc => vscode.window.showTextDocument(doc, { preview:false }));
+        
+      // Better for large / binary files
+      //vscode.commands.executeCommand( 'vscode.open', uri);
     }
   }
 
@@ -463,6 +469,19 @@ export class ProjectTreeProvider implements vscode.TreeDataProvider<ProjectEleme
       console.log(`  Saving project to '${save_dir}'`);
       // ...  path.join(save_dir, config_tree_layout_file)
       console.log("TODO! project_save()");
+
+      var sections=[];
+      var _save_project_tree_branch = (section, arr) => {
+        
+      }
+
+      // https://github.com/npm/ini
+      var ini_txt = ini.stringify(sections); // , { section: '.' }
+      console.log(ini_txt);
+      
+      //fs.writeFileSync(path.join(save_dir, config_session_file), )
+      
+      
     }
     return Promise.resolve();
   }
@@ -479,14 +498,15 @@ export class ProjectTreeProvider implements vscode.TreeDataProvider<ProjectEleme
       //   https://github.com/microsoft/vscode/blob/master/src/vs/workbench/contrib/files/browser/views/openEditorsView.ts#L329
       //   https://marketplace.visualstudio.com/items?itemName=eamodio.restore-editors
       //     https://github.com/eamodio/vscode-restore-editors/blob/01efb6710da5e6ae55421dcbbb51edca7904c4a6/src/constants.ts
+    
+      // This is just the current *visible* one
+      console.log("vscode.window.visibleTextEditors[] :",  vscode.window.visibleTextEditors );
       
       // https://github.com/npm/ini
       var ini_txt = ini.stringify(open_files, { section: 'open-files' })
       console.log(ini_txt);
       
       //fs.writeFileSync(path.join(save_dir, config_session_file), )
-      
-      
     }
     return Promise.resolve();
   }
