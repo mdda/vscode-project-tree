@@ -84,17 +84,9 @@
         "menus": {
             "view/title": [
                 {
-                    "TODO": "implement this",
-                    "TODO-after": "implement session_load() too",
-                    "command": "projectTree.session_save",
-                    "when": "view == projectTree",
-                    "group": "1_projectTree@1"
-                },
-                {
-                    "TODO": "implement this",
                     "command": "projectTree.project_save",
                     "when": "view == projectTree",
-                    "group": "1_projectTree@2"
+                    "group": "1_projectTree@1"
                 }
             ],
             "view/item/context": [
@@ -137,6 +129,13 @@
         ],
         "XXX-menus": {
             "XXX-view/title": [
+                {
+                    "TODO": "implement this",
+                    "TODO-after": "implement session_load() too",
+                    "command": "projectTree.session_save",
+                    "when": "view == projectTree",
+                    "group": "1_projectTree@1"
+                },
                 {
                     "command": "projectTree.refresh",
                     "when": "view == projectTree",
