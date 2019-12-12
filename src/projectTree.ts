@@ -2,7 +2,10 @@ import * as vscode from 'vscode';
 import * as fs from 'fs';
 import * as path from 'path';
 
-import * as ini from 'ini';
+//import * as ini from 'ini';
+
+// https://www.npmjs.com/package/js-ini :: Much better behaved with '.'
+import * as ini from 'js-ini';
 
 import * as mkdirp from 'mkdirp';
 
@@ -112,6 +115,7 @@ export class ProjectTreeProvider implements vscode.TreeDataProvider<ProjectEleme
     return Promise.resolve(element.children);
   }
   
+  /*
   clickFile_by_id(id: number): void {
     console.log(`You clicked on File '${id}'`); 
     if(this.move_from_element) { // We're completing a move to command here
@@ -122,6 +126,7 @@ export class ProjectTreeProvider implements vscode.TreeDataProvider<ProjectEleme
       //.. todo - maybe later
     }
   }
+  */
 
   clickFile(element: ProjectElement): void {
     console.log(`You clicked on File element '${element.ptid}'`); 
@@ -153,6 +158,7 @@ export class ProjectTreeProvider implements vscode.TreeDataProvider<ProjectEleme
     }
   }
 
+  /*
   add_by_id(id: number): void {
     console.log(`You clicked on Add to location '${id}'`); 
     var element = this.findElementInTree(id);
@@ -160,6 +166,7 @@ export class ProjectTreeProvider implements vscode.TreeDataProvider<ProjectEleme
       console.log(`  Found the element : Label '{element.label}'`); 
     }
   }
+  */
   
   get_active_document_uri() {
     // https://github.com/Tyriar/vscode-terminal-here/blob/master/src/extension.ts
@@ -368,6 +375,9 @@ export class ProjectTreeProvider implements vscode.TreeDataProvider<ProjectEleme
 
   project_load( project_ini_file: string ): void {
     // Read in the config...  :: https://github.com/npm/ini
+    var config = ini.parse(fs.readFileSync(project_ini_file, 'utf-8'))
+    
+    /* This is for the (abandoned by me) package 'ini' 
     var config_mangled = ini.parse(fs.readFileSync(project_ini_file, 'utf-8'))
     
     // Strangely, the initial '.' could be stripped off the section names : Add back
@@ -381,6 +391,7 @@ export class ProjectTreeProvider implements vscode.TreeDataProvider<ProjectEleme
       return acc;
     }, {});
     //console.log("config", config);
+    */
     
     var _load_project_tree_branch = (section, parent) => {
       console.log("_load_project_tree_branch", section);
@@ -467,21 +478,30 @@ export class ProjectTreeProvider implements vscode.TreeDataProvider<ProjectEleme
     var save_dir = await this.get_valid_save_path("Project save path :");
     if(save_dir) {
       console.log(`  Saving project to '${save_dir}'`);
-      // ...  path.join(save_dir, config_tree_layout_file)
-      console.log("TODO! project_save()");
 
-      var sections=[];
-      var _save_project_tree_branch = (section, arr) => {
+      var config={};
+      var _save_project_tree_branch = (section: string, arr: ProjectElement[]) => {
+        config[section]={};
         
+        arr.forEach( (ele, i) => {
+          //console.log(`* ${ele.label}:${ele.ptid}`);
+          var j=(i+1)*10;
+          if('f'==ele.type) {
+            config[section][j+''] = ele.filename;
+          }
+          else {
+            config[section][j+'-group'] = ele.label;
+            _save_project_tree_branch(section+'/'+ele.label, ele.children);
+          }  
+        });
       }
+      _save_project_tree_branch('.', this.tree_root.children);
 
-      // https://github.com/npm/ini
-      var ini_txt = ini.stringify(sections); // , { section: '.' }
-      console.log(ini_txt);
+      // https://github.com/npm/js-ini
+      var ini_txt = ini.stringify(config);
+      //console.log(ini_txt);
       
-      //fs.writeFileSync(path.join(save_dir, config_session_file), )
-      
-      
+      fs.writeFileSync(path.join(save_dir, config_tree_layout_file), ini_txt);
     }
     return Promise.resolve();
   }
@@ -491,7 +511,7 @@ export class ProjectTreeProvider implements vscode.TreeDataProvider<ProjectEleme
     if(save_dir) {
       console.log(`  Saving session to '${save_dir}'`);
       
-      var open_files=[];
+      var open_files={};
       
       // Hmm : This may not be so easy...
       //   https://github.com/microsoft/vscode/issues/15178
@@ -502,8 +522,8 @@ export class ProjectTreeProvider implements vscode.TreeDataProvider<ProjectEleme
       // This is just the current *visible* one
       console.log("vscode.window.visibleTextEditors[] :",  vscode.window.visibleTextEditors );
       
-      // https://github.com/npm/ini
-      var ini_txt = ini.stringify(open_files, { section: 'open-files' })
+      // https://github.com/npm/js=ini
+      var ini_txt = ini.encode(open_files);
       console.log(ini_txt);
       
       //fs.writeFileSync(path.join(save_dir, config_session_file), )
