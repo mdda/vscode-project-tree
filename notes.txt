@@ -78,3 +78,12 @@ https://medium.com/@sanaajani/creating-your-first-vs-code-extension-8dbdef2d6ad9
 In vscode terminal window, to execute the watch script defined in package.json:scripts, do :
 npm run watch 
 
+
+# Publishing the finished extension
+#   https://code.visualstudio.com/api/working-with-extensions/publishing-extension
+npm install vsce  # no '-g', which would have made this easier...
+
+node_modules/vsce/out/vsce package
+# -->  vscode-project-tree-0.0.1.vsix  == /home/andrewsm/OpenSource/vscode-project-tree/vscode-project-tree-0.0.1.vsix
+
+code --install-extension /home/andrewsm/OpenSource/vscode-project-tree/vscode-project-tree-0.0.1.vsix
