@@ -10,3 +10,6 @@ vsc-extension-quickstart.md
 .geany/**
 .geany-orig/**
 .git/**
+**/*.ts
+**/tsconfig.json
+node_modules/**/test/**
