@@ -24,7 +24,7 @@
     "activationEvents": [
         "onView:projectTree"
     ],
-    "main": "./out/extension.js",
+    "main": "./out/extension",
     "contributes": {
         "viewsContainers": {
             "activitybar": [
@@ -164,45 +164,6 @@
                     "type": "string",
                     "default": "DefaultConfig.path",
                     "description": "Seeing whether this will work"
-                },
-                "XXX-symbolOutline.doSort": {
-                    "type": "boolean",
-                    "default": false,
-                    "description": "Sort the outline"
-                },
-                "XXX-symbolOutline.expandNodes": {
-                    "type": "array",
-                    "default": [
-                        "Module",
-                        "Class",
-                        "Interface",
-                        "Namespace",
-                        "Object",
-                        "Package",
-                        "Struct"
-                    ],
-                    "description": "Kinds of nodes to be expanded automatically."
-                },
-                "XXX-symbolOutline.sortOrder": {
-                    "type": "array",
-                    "default": [
-                        "Class",
-                        "Module",
-                        "Constant",
-                        "Interface",
-                        "*",
-                        "Constructor",
-                        "Function",
-                        "Method"
-                    ],
-                    "description": "Order to the sort symbols in, if sorted.  * is placeholder for all symbols not explicitly listed."
-                },
-                "XXX-symbolOutline.topLevel": {
-                    "type": "array",
-                    "default": [
-                        "*"
-                    ],
-                    "description": "Which symbols to include at the topmost scope.  * includes everything."
                 }
             }
         }
@@ -211,7 +172,7 @@
         "vscode:prepublish": "npm run compile",
         "compile": "./node_modules/typescript/bin/tsc -p ./",
         "watch": "./node_modules/typescript/bin/tsc -watch -p ./",
-        "postinstall": "node ./node_modules/vscode/bin/install",
+        "XXXpostinstall": "node ./node_modules/vscode/bin/install",
         "tsc": "./node_modules/typescript/bin/tsc"
     },
     "devDependencies": {
@@ -219,17 +180,11 @@
         "@types/node": "^10.12.21",
         "@types/vscode": "^1.39.0",
         "tslint": "^5.12.1",
-        "typescript": "^3.7.3"
-    },
-    "XXX-devDependencies": {
-        "@types/mocha": "^2.2.32",
-        "@types/node": "^6.0.40",
-        "mocha": "^2.3.3",
-        "ini": "*",
-        "typescript": "^3.5.1"
+        "typescript": "^3.7.3",
+        "vsce": "^1.71.0"
     },
     "dependencies": {
-        "js-ini": "^1.1.3",
-        "vsce": "^1.71.0"
+        "mkdirp": "^0.5.1",
+        "js-ini": "^1.1.3"
     }
 }

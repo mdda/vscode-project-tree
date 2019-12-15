@@ -13,3 +13,8 @@ vsc-extension-quickstart.md
 **/*.ts
 **/tsconfig.json
 node_modules/**/test/**
+resources/dark/**
+resources/light/**
+**/*.svg
+media/**
+notes.txt

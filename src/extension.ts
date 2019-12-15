@@ -1,6 +1,5 @@
 import * as vscode from "vscode"; 
 
-//import { SymbolOutlineProvider } from "./symbolOutline";
 import { ProjectTreeProvider, ProjectElement } from "./projectTree";
 
 export function activate(context: vscode.ExtensionContext) {
