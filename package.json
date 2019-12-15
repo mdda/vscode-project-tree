@@ -31,7 +31,7 @@
                 {
                     "id": "project-tree-bar",
                     "title": "Project Tree",
-                    "icon": "resources/icon.svg"
+                    "icon": "resources/icon.png"
                 }
             ]
         },
@@ -209,16 +209,17 @@
     },
     "scripts": {
         "vscode:prepublish": "npm run compile",
-        "compile": "tsc -p ./",
-        "watch": "tsc -watch -p ./",
-        "XXX-postinstall": "node ./node_modules/vscode/bin/install"
+        "compile": "./node_modules/typescript/bin/tsc -p ./",
+        "watch": "./node_modules/typescript/bin/tsc -watch -p ./",
+        "postinstall": "node ./node_modules/vscode/bin/install",
+        "tsc": "./node_modules/typescript/bin/tsc"
     },
     "devDependencies": {
         "@types/mkdirp": "^0.5.2",
         "@types/node": "^10.12.21",
         "@types/vscode": "^1.39.0",
-        "typescript": "^3.5.1",
-        "tslint": "^5.12.1"
+        "tslint": "^5.12.1",
+        "typescript": "^3.7.3"
     },
     "XXX-devDependencies": {
         "@types/mocha": "^2.2.32",
