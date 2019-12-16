@@ -2,7 +2,8 @@ import * as vscode from 'vscode';
 import * as fs from 'fs';
 import * as path from 'path';
 
-// https://www.npmjs.com/package/js-ini :: Much better behaved with '.'
+// https://www.npmjs.com/package/js-ini 
+//   :: Much better behaved with '.' than the 'ini' package
 import * as ini from 'js-ini';
 
 import * as mkdirp from 'mkdirp';
@@ -372,24 +373,8 @@ export class ProjectTreeProvider implements vscode.TreeDataProvider<ProjectEleme
   }
 
   project_load( project_ini_file: string ): void {
-    // Read in the config...  :: https://github.com/npm/ini
+    // Read in the config...  :: https://www.npmjs.com/package/js-ini 
     var config = ini.parse(fs.readFileSync(project_ini_file, 'utf-8'))
-    
-    /* This is for the (abandoned by me) package 'ini' 
-    var config_mangled = ini.parse(fs.readFileSync(project_ini_file, 'utf-8'))
-    
-    // Strangely, the initial '.' could be stripped off the section names : Add back
-    var config = Object.keys(config_mangled['']).reduce( (acc, a) => {
-      if(a.substr(0,1)=='.') {
-        acc[ a ] = config_mangled[''][a];
-      }
-      else {
-        acc[ '.'+a ] = config_mangled[''][a];
-      }
-      return acc;
-    }, {});
-    //console.log("config", config);
-    */
     
     var _load_project_tree_branch = (section, parent) => {
       console.log("_load_project_tree_branch", section);
@@ -495,7 +480,7 @@ export class ProjectTreeProvider implements vscode.TreeDataProvider<ProjectEleme
       }
       _save_project_tree_branch('.', this.tree_root.children);
 
-      // https://github.com/npm/js-ini
+      // https://github.com/npm/js-ini :: Now gets ordering correct
       var ini_txt = ini.stringify(config);
       //console.log(ini_txt);
       
