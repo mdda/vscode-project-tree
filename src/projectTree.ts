@@ -548,8 +548,6 @@ export class ProjectElement extends vscode.TreeItem {
     public readonly collapsibleState: vscode.TreeItemCollapsibleState,
     
     public filename?: string
-    
-    //public readonly command?: vscode.Command
   ) {
     super(label, collapsibleState);
     if('f'==type) {
@@ -558,8 +556,8 @@ export class ProjectElement extends vscode.TreeItem {
       this.command = {
         command: "projectTree.clickFile",
         title: "Click File",
-        //arguments: [this.ptid]
-        arguments: [this]
+        //arguments: [this.ptid] // initial attempt
+        arguments: [this]        // Much cleaner implementation
       };      
     }
     else {
@@ -588,15 +586,6 @@ export class ProjectElement extends vscode.TreeItem {
       this.label=name_new;
     }
   }
-  
-  //get description(): string {
-  //  return this.version;
-  //}
-
-  XXXiconPath = {
-    light: path.join(__filename, '..', '..', 'resources', 'light', 'dependency.svg'),
-    dark: path.join(__filename, '..', '..', 'resources', 'dark', 'dependency.svg')
-  };
 
   contextValue = 'project_element';
 }
