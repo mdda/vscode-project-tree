@@ -2,12 +2,8 @@
 
 Code foundation taken from (https://github.com/patrys/vscode-code-outline)
 
-symbolOutline -> projectTree
-SymbolOutlineProvider -> ProjectTreeProvider
-SymbolOutlineTreeDataProvider -> ProjectTreeTreeDataProvider
-symbolViewer -> projectViewer
 
-## Running/debugging the Project Tree extension 
+## Running the Project Tree extension in debugging mode
 
 ```
 dnf install nodejs-typescript.noarch
@@ -15,52 +11,27 @@ dnf install nodejs-typescript.noarch
 
 - Open this example in VS Code Insiders (i.e. a recent version of VS code):
   -  `cd .; code .`
-  -  ?? `cd .; code --enable-proposed-api mdda.vscode-project-tree .`
-- `F5` to start debugging
-
-- Project Tree is shown in Package explorer view container in Activity bar
-
-
+- In the terminal window (`Ctrl-tilde` is the hotkey), use instant reload on edit :
+  -  `npm run watch`
+- `F5` to start debugging the extension, loaded in a 'secondary' `code` session
+  - Project Tree is shown in Package explorer view container in Activity bar
 
 
 
+## Features 
 
-## Features (OLD)
+Displays a project outline tree in the explorer pane.
 
-Displays a code outline tree in the explorer pane.
+To activate find and expand the "Project Tree" section near the bottom of the Explorer tab.
 
-To activate find and expand the "Code Outline" section near the bottom of the Explorer tab.
 
-## Language Support
+#  TODO...
 
-For the outline to work, the language support plugins need to support symbol information.
 
-For the outline to form a tree structure, the language support plugins need to report the entire definition range as part of symbol.
 
-See VS Code [issue #34968](https://github.com/Microsoft/vscode/issues/34968) and language server protocol [issue #132](https://github.com/Microsoft/language-server-protocol/issues/132) for a discussion.
 
-Here is a list of languages known to work with Code Outline:
 
-| Language/Format | Extension |
-| --- | --- |
-| C | [C/C++](https://marketplace.visualstudio.com/items?itemName=ms-vscode.cpptools) |
-| C++ | [C/C++](https://marketplace.visualstudio.com/items?itemName=ms-vscode.cpptools), [cquery](https://github.com/cquery-project/vscode-cquery) |
-| Docker | [Docker](https://marketplace.visualstudio.com/items?itemName=PeterJausovec.vscode-docker) |
-| HTML | Comes with VS Code |
-| Go | [Go](https://marketplace.visualstudio.com/items?itemName=ms-vscode.Go) |
-| Java | [Language Support for Java(TM) by Red Hat](https://marketplace.visualstudio.com/items?itemName=redhat.java)
-| JavaScript | Comes with VS Code |
-| JSON | Comes with VS Code |
-| Markdown | Comes with VS Code |
-| Perl | [Perl](https://marketplace.visualstudio.com/items?itemName=henriiik.vscode-perl) |
-| PHP | [PHP Symbols](https://marketplace.visualstudio.com/items?itemName=linyang95.php-symbols) |
-| Powershell | [PowerShell](https://marketplace.visualstudio.com/items?itemName=ms-vscode.PowerShell) |
-| Python | [Python](https://marketplace.visualstudio.com/items?itemName=ms-python.python) |
-| Rust | [Rust (rls)](https://marketplace.visualstudio.com/items?itemName=rust-lang.rust) |
-| TypeScript | Comes with VS Code |
-| YAML | [YAML Support by Red Hat](https://marketplace.visualstudio.com/items?itemName=redhat.vscode-yaml) |
 
-Please report any missing extensions and I'll update the list.
 
 ## Extension Settings
 
