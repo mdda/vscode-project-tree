@@ -71,6 +71,11 @@ npm install # within "Terminal - new" in VScode
 TestView appears in Explorer view - but doesn't show anything when opened...
 
 
+### Reinstall all the typescript stuff after node upgrade
+sudo npm install -g typescript
+# -> typescript@3.9.5
+
+
 
 This seems to explain it well : 
 https://medium.com/@sanaajani/creating-your-first-vs-code-extension-8dbdef2d6ad9

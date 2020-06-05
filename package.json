@@ -1,8 +1,8 @@
 {
     "name": "vscode-project-tree",
     "displayName": "Project Tree",
-    "description": "A Project Tree for VSCode",
-    "version": "0.0.1",
+    "description": "Project Tree for VSCode",
+    "version": "0.0.2",
     "publisher": "mdda",
     "homepage": "https://github.com/mdda/vscode-project-tree",
     "repository": {
@@ -180,8 +180,8 @@
         "@types/node": "^10.12.21",
         "@types/vscode": "^1.39.0",
         "tslint": "^5.12.1",
-        "typescript": "^3.7.3",
-        "vsce": "^1.71.0"
+        "typescript": "^3.9.5",
+        "vsce": "^1.75.0"
     },
     "dependencies": {
         "mkdirp": "^0.5.1",
