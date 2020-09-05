@@ -181,7 +181,7 @@
         "@types/vscode": "^1.39.0",
         "tslint": "^5.12.1",
         "typescript": "^3.9.5",
-        "vsce": "^1.75.0"
+        "vsce": "^1.79.5"
     },
     "dependencies": {
         "mkdirp": "^0.5.1",
