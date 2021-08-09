@@ -72,9 +72,8 @@ TestView appears in Explorer view - but doesn't show anything when opened...
 
 
 ### Reinstall all the typescript stuff after node upgrade
-sudo npm install -g typescript
-# -> typescript@3.9.5
-
+sudo npm install -g typescript # This is needed, otherwise the node_modules to be included gets v large
+# -> typescript@4.3.5
 
 
 This seems to explain it well : 
@@ -84,21 +83,23 @@ In vscode terminal window, to execute the watch script defined in package.json:s
 npm run watch 
 
 
+#npm install vsce  # attempted to do this without '-g', which would have made this cleaner...
+#node_modules/vsce/out/vsce package  # Bulks up node_modules
 
 
 
 # Publishing the finished extension
 #   https://code.visualstudio.com/api/working-with-extensions/publishing-extension
-#npm install vsce  # no '-g', which would have made this easier...
-#node_modules/vsce/out/vsce package
 
 # Run the following line to 'compile' the vsix package:
-npm install -g vsce # 
 npm install
-npm run compile
-vsce package
+npm install -g vsce # This is needed, otherwise the node_modules to be included gets v large
 
+# npm run compile # No need - it's in the vsce:prepublish
+vsce package
 # -->  vscode-project-tree-0.0.X.vsix
 
-code --install-extension `pwd`/vscode-project-tree-0.0.5.vsix
+vsce ls # Check that our local modules get included
+
+code --install-extension ./vscode-project-tree-0.0.6.vsix
 

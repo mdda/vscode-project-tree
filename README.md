@@ -75,4 +75,11 @@ Default settings:
 Until Microsoft provides an API to see which files are open in tabs,
 we can't get the 'Load/Save Session' functionality that's so useful in `geany-project-tree`...
 
+See Issue : 
+
+*  (API Access to "Open Editors")[https://github.com/microsoft/vscode/issues/15178]
+   +  (Is there any estimate on when this will actually be worked on? )[https://github.com/microsoft/vscode/issues/15178#issuecomment-639991364]
+   +  (... I am now locking this issue because ...)[https://github.com/microsoft/vscode/issues/15178#issuecomment-652411217]  YIKES
+   
+*  (Possible hacky solution)[https://github.com/eamodio/vscode-restore-editors/blob/master/src/activeEditorTracker.ts] - also has issue looking for save-session behaviour
 
