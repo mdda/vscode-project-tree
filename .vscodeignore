@@ -23,10 +23,10 @@ media/**
 notes.txt
 
 XXnode_modules/**
-node_modules**/**
+XXnode_modules**/**
 
-node_modules/**/test/**
-node_modules**/**/test/**
+XXnode_modules/**/test/**
+XXnode_modules**/**/test/**
 
 
 !file.ts

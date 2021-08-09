@@ -552,6 +552,7 @@ export class ProjectElement extends vscode.TreeItem {
     super(label, collapsibleState);
     if('f'==type) {
       this.filename = filename;
+      this.tooltip = filename;
       
       this.command = {
         command: "projectTree.clickFile",
@@ -562,6 +563,7 @@ export class ProjectElement extends vscode.TreeItem {
     }
     else {
       this.children=[];
+      this.tooltip = label;
       this.command = {
         command: "projectTree.clickGroup",
         title: "Click Group",
@@ -570,12 +572,14 @@ export class ProjectElement extends vscode.TreeItem {
     }
   }
 
+  /*
   get tooltip(): string {
     if('f'==this.type) {
       return `${this.filename}`;
     }
     return `${this.label}`;
   }
+  */
 
   rename(name_new): void {
     if('f'==this.type) {

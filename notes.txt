@@ -89,11 +89,16 @@ npm run watch
 
 # Publishing the finished extension
 #   https://code.visualstudio.com/api/working-with-extensions/publishing-extension
-npm install vsce  # no '-g', which would have made this easier...
+#npm install vsce  # no '-g', which would have made this easier...
+#node_modules/vsce/out/vsce package
 
-node_modules/vsce/out/vsce package
-# -->  vscode-project-tree-0.0.1.vsix  == /home/andrewsm/OpenSource/vscode-project-tree/vscode-project-tree-0.0.1.vsix
+# Run the following line to 'compile' the vsix package:
+npm install -g vsce # 
+npm install
+npm run compile
+vsce package
 
-#code --install-extension /home/andrewsm/OpenSource/vscode-project-tree/vscode-project-tree-0.0.1.vsix
-code --install-extension /home/andrewsm/OpenSource/vscode-project-tree/vscode-project-tree-0.0.2.vsix
+# -->  vscode-project-tree-0.0.X.vsix
+
+code --install-extension `pwd`/vscode-project-tree-0.0.5.vsix
 

@@ -68,7 +68,7 @@ Default settings:
 - **doSort:** sort the outline.
 - **expandNodes:** kinds of nodes to be expanded automatically.
 - **sortOrder:** order to the sort symbols.
-- **topLevel:** wich symbols include at the topmost scope.
+- **topLevel:** which symbols include at the topmost scope.
 
 ## Known Issues
 
