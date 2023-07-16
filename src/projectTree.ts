@@ -544,17 +544,23 @@ export class ProjectTreeProvider implements vscode.TreeDataProvider<ProjectEleme
       // TODO : Remember currently active editor
 
       // Now find the line numbers of each open file...  (race through the tabs, and get the line numbers)
+      var line_detectors=[];
       for( var i=0; i<uri_arr.length; i++ ) {
         const uri=uri_arr[i], tab_i=i;
-        vscode.workspace.openTextDocument(uri)
-          .then(doc => {
-            vscode.window.showTextDocument(doc, { preserveFocus:true })
-              .then(ed => {
-                console.log(`tab[${tab_i}]:L${ed.selection.start.line}`);  // Just the zero-based first line of the current selection
-              });
-          });
+        line_detectors.push(
+          vscode.workspace.openTextDocument(uri)
+            .then(doc => {
+              return vscode.window.showTextDocument(doc, { preserveFocus:true })
+                .then(ed => {
+                  var line=ed.selection.start.line;
+                  console.log(`tab[${tab_i}]:L${line} async`);  // Just the zero-based first line of the current selection
+                  return line;
+                });
+            })
+        );
       }
-      // TODO : Need to await execution of the whole of the above ...
+      const line_arr = await Promise.all(line_detectors);
+      console.log("line_arr : ", line_arr);
       
       // TODO : Restore currently active editor
       
@@ -567,7 +573,7 @@ export class ProjectTreeProvider implements vscode.TreeDataProvider<ProjectEleme
         console.log(`adding[${j}] = ${uri.path}`);  //
         const filename = this.get_relative_filename(uri);
         // Want to also save Line numbers, and Read-only status
-        open_files[j+'']=`${filename}`;
+        open_files[j+'']=`${filename}:${line_arr[i]+1}`;  // 1-based line numbering in ini file
       }
       
       // https://github.com/npm/js=ini
