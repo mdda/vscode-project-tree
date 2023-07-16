@@ -77,7 +77,7 @@ export class ProjectTreeProvider implements vscode.TreeDataProvider<ProjectEleme
   }
 
   refresh(): void {
-    this._onDidChangeTreeData.fire();
+    this._onDidChangeTreeData.fire(undefined);
   }
   
   findElementInTree(id: number): ProjectElement {
@@ -137,7 +137,7 @@ export class ProjectTreeProvider implements vscode.TreeDataProvider<ProjectEleme
       
       let uri = this.expand_relative_filename(element.filename);
       
-      //  Put this in a new tab
+      //  Put this in a new tab (or open existing one if it exists)
       //    https://code.visualstudio.com/api/references/vscode-api#TextDocumentShowOptions
       vscode.workspace.openTextDocument(uri)
         .then(doc => vscode.window.showTextDocument(doc, { preview:false }));
@@ -438,6 +438,15 @@ export class ProjectTreeProvider implements vscode.TreeDataProvider<ProjectEleme
     var config_mangled = ini.parse(fs.readFileSync(session_ini_file, 'utf-8'));
     console.log("TODO! session_load()");
  
+    /*
+       let uri = this.expand_relative_filename(element.filename);
+      
+      //  Put this in a new tab
+      //    https://code.visualstudio.com/api/references/vscode-api#TextDocumentShowOptions
+      // https://code.visualstudio.com/api/references/vscode-api#TextDocumentShowOptions        
+      vscode.workspace.openTextDocument(uri)
+        .then(doc => vscode.window.showTextDocument(doc, { selection:TODO, preview:false }));
+    */
   }
 
   
@@ -493,23 +502,79 @@ export class ProjectTreeProvider implements vscode.TreeDataProvider<ProjectEleme
     var save_dir = await this.get_valid_save_path("Session save path :");
     if(save_dir) {
       console.log(`  Saving session to '${save_dir}'`);
-      
-      var open_files={};
+
+      // This is just the current *visible* one
+      //console.log("vscode.window.visibleTextEditors[] :",  vscode.window.visibleTextEditors );
+
       
       // Hmm : This may not be so easy...
       //   https://github.com/microsoft/vscode/issues/15178
       //   https://github.com/microsoft/vscode/blob/master/src/vs/workbench/contrib/files/browser/views/openEditorsView.ts#L329
       //   https://marketplace.visualstudio.com/items?itemName=eamodio.restore-editors
       //     https://github.com/eamodio/vscode-restore-editors/blob/01efb6710da5e6ae55421dcbbb51edca7904c4a6/src/constants.ts
-    
-      // This is just the current *visible* one
-      console.log("vscode.window.visibleTextEditors[] :",  vscode.window.visibleTextEditors );
+
+      // https://github.com/microsoft/vscode/commit/aa69f3d7623c464aba726d12ea0d83428f43e8b9
+      //   tab.input.kind.uri for certain classes of tabs.
+      
+      var uri_arr=[];
+      
+      const tabArray = vscode.window.tabGroups.all;    
+      for (const tabGroup of tabArray) {
+        for (const tab of tabGroup.tabs) {
+          // Do something with the tab.
+          console.log("tab :", tab );
+          //console.log("  tab.label :", tab.label );   // This is the text shown on the tab itself
+          //console.log("  tab.document :", tab.document ); ?suggested by Bard
+
+          // https://code.visualstudio.com/api/references/vscode-api#TabInputText
+          //console.log("  tab.input :", tab.input ); 
+          //console.log("  tab.input :", tab.input instanceof vscode.TabInputText); 
+          
+          if(tab.input instanceof vscode.TabInputText) { // Only deal with text-y files
+            const uri = tab.input.uri;  // this is valid now...
+            console.log("  tab.input.uri :", uri ); 
+            uri_arr.push(uri);
+          }
+          else {
+            console.log("  tab.input is not text-y :", tab.input ); 
+          }
+        }
+      }
+
+      // TODO : Remember currently active editor
+
+      // Now find the line numbers of each open file...  (race through the tabs, and get the line numbers)
+      for( var i=0; i<uri_arr.length; i++ ) {
+        const uri=uri_arr[i], tab_i=i;
+        vscode.workspace.openTextDocument(uri)
+          .then(doc => {
+            vscode.window.showTextDocument(doc, { preserveFocus:true })
+              .then(ed => {
+                console.log(`tab[${tab_i}]:L${ed.selection.start.line}`);  // Just the zero-based first line of the current selection
+              });
+          });
+      }
+      // TODO : Need to await execution of the whole of the above ...
+      
+      // TODO : Restore currently active editor
+      
+      var open_files={};
+      //console.log(uri_arr);
+      
+      //for( const uri of uri_arr ) {
+      for( var i=0; i<uri_arr.length; i++ ) {
+        const uri=uri_arr[i], j=(i+1)*10;
+        console.log(`adding[${j}] = ${uri.path}`);  //
+        const filename = this.get_relative_filename(uri);
+        // Want to also save Line numbers, and Read-only status
+        open_files[j+'']=`${filename}`;
+      }
       
       // https://github.com/npm/js=ini
-      var ini_txt = ini.encode(open_files);
+      var ini_txt = ini.stringify({"open-files":open_files});
       console.log(ini_txt);
       
-      //fs.writeFileSync(path.join(save_dir, config_session_file), )
+      //fs.writeFileSync(path.join(save_dir, config_session_file), ini_txt)
     }
     return Promise.resolve();
   }
