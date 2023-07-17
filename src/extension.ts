@@ -29,5 +29,7 @@ export function activate(context: vscode.ExtensionContext) {
   vscode.commands.registerCommand("projectTree.move",   (element: ProjectElement) => projectTreeProvider.move_start(element));
   vscode.commands.registerCommand("projectTree.delete", (element: ProjectElement) => projectTreeProvider.delete_element(element));
   
-  vscode.window.registerTreeDataProvider('projectTree', projectTreeProvider);  
+  vscode.window.registerTreeDataProvider('projectTree', projectTreeProvider);
+  
+  projectTreeProvider.session_load(projectTreeProvider.session_path);
 }

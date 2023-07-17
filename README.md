@@ -20,66 +20,14 @@ dnf install nodejs-typescript.noarch
 
 ## Features 
 
-Displays a project outline tree in the explorer pane.
+* Display a project outline tree in the explorer pane - 
+this is (by default) stored in `./.editor/project-tree-layout.ini`, 
+and the intuition is that this can be common across team members (i.e. not often updated, and storeable in git)
 
-To activate find and expand the "Project Tree" section near the bottom of the Explorer tab.
+* Save all tabs and line locations for the session in a separate file - 
+this is (by default) stored in `./.editor/session.ini`, and, since it is rather individual to an editing session,
+this **should not** be stored in git.
 
+To activate, find and expand the "Project Tree" section near the bottom of the Explorer tab.
 
-#  TODO...
-
-
-
-
-
-
-
-## Extension Settings
-
-Default settings:
-
-```json
-{
-  "symbolOutline.doSort": false,
-  "symbolOutline.sortOrder": [
-    "Class",
-    "Module",
-    "Constant",
-    "Interface",
-    "*",
-    "Constructor",
-    "Function",
-    "Method"
-  ],
-  "symbolOutline.expandNodes": [
-    "Module",
-    "Class",
-    "Interface",
-    "Namespace",
-    "Object",
-    "Package",
-    "Struct"
-  ],
-  "symbolOutline.topLevel": [
-    "*"
-  ]
-}
-```
-
-- **doSort:** sort the outline.
-- **expandNodes:** kinds of nodes to be expanded automatically.
-- **sortOrder:** order to the sort symbols.
-- **topLevel:** which symbols include at the topmost scope.
-
-## Known Issues
-
-Until Microsoft provides an API to see which files are open in tabs,
-we can't get the 'Load/Save Session' functionality that's so useful in `geany-project-tree`...
-
-See Issue : 
-
-*  (API Access to "Open Editors")[https://github.com/microsoft/vscode/issues/15178]
-   +  (Is there any estimate on when this will actually be worked on? )[https://github.com/microsoft/vscode/issues/15178#issuecomment-639991364]
-   +  (... I am now locking this issue because ...)[https://github.com/microsoft/vscode/issues/15178#issuecomment-652411217]  YIKES
-   
-*  (Possible hacky solution)[https://github.com/eamodio/vscode-restore-editors/blob/master/src/activeEditorTracker.ts] - also has issue looking for save-session behaviour
-
+For [historical reasons](https://github.com/mdda/geany-project-tree), this extension also looks in `./.geany` for the `.ini` files at startup, if they're not found in `./.editor`.

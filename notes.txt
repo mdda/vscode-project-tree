@@ -101,5 +101,5 @@ vsce package
 
 vsce ls # Check that our local modules get included
 
-code --install-extension ./vscode-project-tree-0.0.6.vsix
+code --install-extension ./vscode-project-tree-0.0.7.vsix
 

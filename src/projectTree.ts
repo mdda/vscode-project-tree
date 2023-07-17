@@ -23,7 +23,7 @@ export class ProjectTreeProvider implements vscode.TreeDataProvider<ProjectEleme
   private config_dir: string = undefined;
   
   private project_path: string = undefined;
-  private session_path: string = undefined;
+  readonly session_path: string = undefined;
   
   // Not actually used as a TreeView element, just as a holder for children
   private tree_root: ProjectElement = undefined;
@@ -57,9 +57,7 @@ export class ProjectTreeProvider implements vscode.TreeDataProvider<ProjectEleme
         }
         
         this.session_path = path.join(this.config_dir, config_session_file);
-        if( this.pathExists(this.session_path) ) {
-          this.session_load( this.session_path );
-        }
+        // will be loaded async in extension.ts
       }
     }
     
@@ -79,6 +77,14 @@ export class ProjectTreeProvider implements vscode.TreeDataProvider<ProjectEleme
   refresh(): void {
     this._onDidChangeTreeData.fire(undefined);
   }
+  
+  //async activate() {  // See extension.ts activate() instead
+  //  console.log("projectTree.activate called");
+  //}
+  
+  //deactivate() {
+  //  console.log("projectTree.deactivate called");
+  //}
   
   findElementInTree(id: number): ProjectElement {
     function findElementInThis(element: ProjectElement) {
@@ -434,19 +440,67 @@ export class ProjectTreeProvider implements vscode.TreeDataProvider<ProjectEleme
     }
   }
 
-  session_load( session_ini_file: string ): void {
+  async session_load( session_ini_file: string ): Promise<void> {
+    if(!this.pathExists(session_ini_file)) {
+      console.log("session_load() - no session file");
+      return;  // nothing to do
+    }
+    
     var config_mangled = ini.parse(fs.readFileSync(session_ini_file, 'utf-8'));
-    console.log("TODO! session_load()");
- 
-    /*
-       let uri = this.expand_relative_filename(element.filename);
+    console.log("session_load() started");
+  
+    const open_files=config_mangled['open-files'];
+    //console.log("open_files", open_files);
+    if(!open_files) {
+      console.log("session_load() - no open files");
+      return;  // nothing to do
+    }
+
+    // Close all open text-y tabs (see save_session for more commented version)
+    // See https://stackoverflow.com/a/75192905
+    
+    const tabArray = vscode.window.tabGroups.all;    
+    for (const tabGroup of tabArray) {
+      for (const tab of tabGroup.tabs) {
+        //console.log("tab :", tab );
+        if(tab.input instanceof vscode.TabInputText) { // Only deal with text-y files
+          const uri = tab.input.uri;  // this is valid now...
+          console.log("  closing :: tab.input.uri.path :", uri.path ); 
+          vscode.window.tabGroups.close(tab);
+        }
+      }
+    }
+    
+    // Now, read tabs in numerical order...
+    var ordered = Object.keys(open_files).sort((n1,n2) => Number(n1) - Number(n2));
+    for( const k of ordered ) {
+      const tab_details=open_files[k].split(':');
+      console.log(`Processing ini : tab ${k} :: ${tab_details}`);
+      
+      const filename=tab_details[0];  // always exists
+      const uri = this.expand_relative_filename(filename);
+      
+      var startLine=0; // default
+      if(tab_details.length>1) {
+        var line1=Number(tab_details[1]);
+        if(line1>0) {
+          startLine=line1-1;  // convert to zero-based
+        }
+      }
+      
+      const opt = { selection:new vscode.Range(startLine,0,startLine,0), preview:false, preserveFocus:true };
       
       //  Put this in a new tab
       //    https://code.visualstudio.com/api/references/vscode-api#TextDocumentShowOptions
-      // https://code.visualstudio.com/api/references/vscode-api#TextDocumentShowOptions        
-      vscode.workspace.openTextDocument(uri)
-        .then(doc => vscode.window.showTextDocument(doc, { selection:TODO, preview:false }));
-    */
+      //  Ensure the tabs get opened in order
+      await vscode.window.showTextDocument(uri, opt)
+              .then( ed=>{
+                console.log(`  Opened tab ${k} :: ${tab_details}`);
+                //return ed;
+              });
+    }
+
+    return;
   }
 
   
@@ -541,7 +595,7 @@ export class ProjectTreeProvider implements vscode.TreeDataProvider<ProjectEleme
         }
       }
 
-      // TODO : Remember currently active editor
+      const active_uri = this.get_active_document_uri();  // Remember currently active editor
 
       // Now find the line numbers of each open file...  (race through the tabs, and get the line numbers)
       var line_detectors=[];
@@ -553,16 +607,20 @@ export class ProjectTreeProvider implements vscode.TreeDataProvider<ProjectEleme
               return vscode.window.showTextDocument(doc, { preserveFocus:true })
                 .then(ed => {
                   var line=ed.selection.start.line;
-                  console.log(`tab[${tab_i}]:L${line} async`);  // Just the zero-based first line of the current selection
+                  //console.log(`tab[${tab_i}]:L${line} async`);  // Just the zero-based first line of the current selection
                   return line;
                 });
             })
         );
       }
       const line_arr = await Promise.all(line_detectors);
-      console.log("line_arr : ", line_arr);
+      //console.log("line_arr : ", line_arr);
       
-      // TODO : Restore currently active editor
+      // Restore currently active editor
+      //vscode.workspace.openTextDocument(active_uri)
+      //  .then(doc => vscode.window.showTextDocument(doc, { preserveFocus:true }));
+      vscode.window.showTextDocument(active_uri, { preserveFocus:true });
+
       
       var open_files={};
       //console.log(uri_arr);
@@ -580,7 +638,8 @@ export class ProjectTreeProvider implements vscode.TreeDataProvider<ProjectEleme
       var ini_txt = ini.stringify({"open-files":open_files});
       console.log(ini_txt);
       
-      //fs.writeFileSync(path.join(save_dir, config_session_file), ini_txt)
+      //fs.writeFileSync(path.join(save_dir, config_session_file+".TEST.ini"), ini_txt)
+      fs.writeFileSync(path.join(save_dir, config_session_file), ini_txt)
     }
     return Promise.resolve();
   }
