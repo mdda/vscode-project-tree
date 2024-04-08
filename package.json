@@ -2,7 +2,7 @@
     "name": "vscode-project-tree",
     "displayName": "Project Tree",
     "description": "Project Tree for VSCode",
-    "version": "0.0.7",
+    "version": "0.0.8",
     "publisher": "mdda",
     "homepage": "https://github.com/mdda/vscode-project-tree",
     "repository": {
@@ -16,7 +16,7 @@
     },
     "XXX-enableProposedApi": true,
     "engines": {
-        "vscode": "^1.78.2"
+        "vscode": "^1.87.2"
     },
     "categories": [
         "Other"
@@ -120,6 +120,12 @@
                     "when": "view == projectTree",
                     "group": "2_projectTree@3"
                 }
+            ],
+            "editor/title/context": [
+                {
+                    "command": "workbench.action.files.toggleActiveEditorReadonlyInSession",
+                    "group": "navigation"
+                }
             ]
         },
         "XXX-commands": [
@@ -191,7 +197,7 @@
         "js-ini": "^1.1.3"
     },
     "devDependencies": {
-        "@types/vscode": "^1.78.2",
+        "@types/vscode": "^1.87.2",
         "@types/node": "^10.12.21",
         "typescript": "^4.3.5",
         "@types/mkdirp": "^0.5.2"

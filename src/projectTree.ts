@@ -496,6 +496,9 @@ export class ProjectTreeProvider implements vscode.TreeDataProvider<ProjectEleme
       await vscode.window.showTextDocument(uri, opt)
               .then( ed=>{
                 console.log(`  Opened tab ${k} :: ${tab_details}`);
+                // Do something with ReadOnly status?  (not yet saved in .session)
+                // See : https://github.com/ArturoDent/read-only-non-workspace/blob/master/src/processTabs.ts#L30C3-L30C99
+                //await vscode.commands.executeCommand('workbench.action.files.togggleActiveEditorReadonlyInSession');
                 //return ed;
               });
     }
@@ -608,6 +611,13 @@ export class ProjectTreeProvider implements vscode.TreeDataProvider<ProjectEleme
                 .then(ed => {
                   var line=ed.selection.start.line;
                   //console.log(`tab[${tab_i}]:L${line} async`);  // Just the zero-based first line of the current selection
+
+                  // Do something with ReadOnly status?  (not yet saved in .session)
+                  //const editor = vscode.window.activeTextEditor;
+                  //const isReadOnly = editor.document.isReadOnly;
+                  //ed.document.fileName
+                  //await vscode.commands.executeCommand('workbench.action.files.togggleActiveEditorReadonlyInSession');
+
                   return line;
                 });
             })

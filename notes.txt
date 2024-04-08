@@ -93,7 +93,7 @@ npm run watch
 
 # Run the following line to 'compile' the vsix package:
 npm install
-npm install -g vsce # This is needed, otherwise the node_modules to be included gets v large
+su npm install -g vsce # This is needed, otherwise the node_modules to be included gets v large
 
 # npm run compile # No need - it's in the vsce:prepublish
 vsce package
