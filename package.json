@@ -121,10 +121,10 @@
                     "group": "2_projectTree@3"
                 }
             ],
-            "editor/title/context": [
+            "editor/context": [
                 {
                     "command": "workbench.action.files.toggleActiveEditorReadonlyInSession",
-                    "group": "navigation"
+                    "group": "z_commands"
                 }
             ]
         },
@@ -156,6 +156,12 @@
             "editor/context": [
                 {
                     "command": "projectTree.revealCurrentSymbol",
+                    "group": "navigation"
+                }
+            ],
+            "editor/title/context": [
+                {
+                    "command": "workbench.action.files.toggleActiveEditorReadonlyInSession",
                     "group": "navigation"
                 }
             ],
